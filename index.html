@@ -95,9 +95,7 @@
       <a class="btn ghost" href="#features">Features</a>
       <a class="btn ghost" href="#privacy">Privacy</a>
       <a class="btn primary" href="#download" id="downloadButton">Get Chroma</a>
-    </nav>
-  </div>
-</header>
+ 
 
 <!-- F8 Search Container Below Header -->
 <!-- Search Container Below Header -->
@@ -130,11 +128,14 @@
   <button style="padding:6px 10px;border-radius:6px;border:none;background-color:#BB86FC;color:#000;font-size:14px;cursor:pointer;">StackOverflow</button>
 </div>
 
+   </nav>
+  </div>
+</header>
+
 <script>
 const queryInput = document.getElementById("search-query");
 const engineSelect = document.getElementById("search-engine");
 const searchButton = document.getElementById("search-button");
-
 // Persist last selected engine
 const SEARCH_ENGINE_KEY = "chroma_last_engine";
 const savedEngine = localStorage.getItem(SEARCH_ENGINE_KEY);
@@ -142,7 +143,6 @@ if (savedEngine) engineSelect.value = savedEngine;
 engineSelect.addEventListener("change", () => {
     localStorage.setItem(SEARCH_ENGINE_KEY, engineSelect.value);
 });
-
 // Perform search
 function performSearch() {
     const query = encodeURIComponent(queryInput.value.trim());
@@ -151,30 +151,29 @@ function performSearch() {
     const fullUrl = engineUrl + query;
     window.open(fullUrl, "_self");
 }
-
+//
 searchButton.addEventListener("click", performSearch);
 queryInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") performSearch();
 });
-
 // Bookmarks click events
 const bookmarks = [
   { name: "Google", url: "https://www.google.com" },
   { name: "Wikipedia", url: "https://www.wikipedia.org" },
   { name: "StackOverflow", url: "https://stackoverflow.com" }
 ];
-
+//
 const bookmarkButtons = document.querySelectorAll("#bookmark-bar button");
 bookmarkButtons.forEach((btn, index) => {
   btn.addEventListener("click", () => {
     window.open(bookmarks[index].url, "_self");
   });
-
-  // Optional: touch feedback
+// Optional: touch feedback
   btn.addEventListener("touchstart", () => { btn.style.backgroundColor = "#9C47FF"; });
   btn.addEventListener("touchend", () => { btn.style.backgroundColor = "#BB86FC"; });
 });
 </script>
+
 
 <!-- Floating Scroll-to-Top Button -->
 <button id="scroll-top" style="position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;border:none;background-color:#BB86FC;color:#000;font-size:20px;font-weight:bold;cursor:pointer;box-shadow:0 4px 8px rgba(0,0,0,0.3);z-index:1000;">⬆️</button>
