@@ -362,7 +362,7 @@ window.addEventListener("load", checkSlideUp);
 <a href="https://github.com/appcod8/Chroma/releases/download/Browser/Chroma-1.0b.apk" target="_blank" style="display:inline-block; padding:3px 8px; margin:4px; background-color:teal; color:white; border-radius:5px; text-decoration:none;">☀️ ⚡Download: Android App
 </a><br>  </div>
           
-          <a class="btn" href="mailto:support@spaceedge.com?subject=Chroma%20Browser%20Support">Contact Support</a>
+          <a class="btn" href="mailto:support@chromabrowser.com?subject=Chroma%20Browser%20Support">Contact Support</a>
         </div>
         <div class="subtext">By installing, you agree to the <a href="/privacy">Privacy Policy</a> and <a href="/terms">Terms</a>.</div>
       </div>
@@ -427,7 +427,8 @@ const scrollTopBtn = document.getElementById("scroll-top");
 scrollTopBtn.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
-// Optional: show button only after scrolling down
+// Show button only after scrolling down
+
 window.addEventListener("scroll", () => {
   if (window.scrollY > 100) {
     scrollTopBtn.style.display = "block";
@@ -436,13 +437,14 @@ window.addEventListener("scroll", () => {
   }
 });
 // Initially hidden
+
 scrollTopBtn.style.display = "none";
 </script>
 -->
 
 <!-- Toolbar Quick Access - Logic 
-     now only Homepage button works, 
-     needs implenting in code later  -->
+     only Homepage button works, other
+     need implenting in code later  -->
 <div class="toolbar" style="position:fixed;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:12px;padding:8px 16px;background:rgba(255,255,255,0.95);border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999;">
   <button id="backBtn" style="padding:8px 12px;border:none;background:#eee;border-radius:8px;font-size:1rem;">←</button>
   <button id="forwardBtn" style="padding:8px 12px;border:none;background:#eee;border-radius:8px;font-size:1rem;">→</button>
@@ -450,11 +452,14 @@ scrollTopBtn.style.display = "none";
   <button id="tabsBtn" style="padding:8px 12px;border:none;background:#eee;border-radius:8px;font-size:1rem;">Tabs</button>
 </div>
 <script>
-  // Homepage button  document.getElementById("homeBtn").addEventListener("click", () => {
-    window.location.href = "https://spaceedge.com/chroma";
+  // Homepage button
+  document.getElementById("homeBtn").addEventListener("click", () => {
+    window.location.href = "https://chromabrowser.com/";
   });
-  // Optional: back/forward buttons  document.getElementById("backBtn").addEventListener("click", () => window.history.back());  document.getElementById("forwardBtn").addEventListener("click", () => window.history.forward());
-  // Tabs button placeholder  document.getElementById("tabsBtn").addEventListener("click", () => alert("Tabs manager coming soon!"));
+  // Optional: back/forward buttons
+  document.getElementById("backBtn").addEventListener("click", () => window.history.back());  document.getElementById("forwardBtn").addEventListener("click", () => window.history.forward());
+  // Tabs button placeholder
+  document.getElementById("tabsBtn").addEventListener("click", () => alert("Tabs manager coming soon!"));
 </script>
 
 </body>
