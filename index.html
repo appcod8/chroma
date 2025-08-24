@@ -3,378 +3,231 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ChromaBrowser — Transparency, Fast. Smart. Private.</title>
-  <meta name="description" content="Chroma Browser — a fast, smart, private, multi‑engine browser. Browse, search, work seamlessly with a sleek, lightweight browser built for speed and privacy." />
+  <title>ChromaBrowser — Fast. Smart. Private.</title>
+  <meta name="description" content="ChromaBrowser — a fast, smart, private, multi-engine browser. Browse, search, work seamlessly with a sleek, lightweight browser built for speed and privacy." />
   <link rel="icon" href="/favicon.ico" />
-<style>
+  <style>
     :root{
-      /* Set these to match brand parity */
-      --brand-1:#5b7cfa; /* primary accent */
-      --brand-2:#00d4ff; /* secondary accent */
-      --text:#0b1220;
-      --muted:#5b6578;
-      --bg:#ffffff;
-      --card:#f6f8ff;
-      --ring: 0 0 0 3px rgba(91,124,250,.35);
-      --radius: 16px;
+      --brand-1:#5b7cfa; --brand-2:#00d4ff; --text:#0b1220; --muted:#5b6578;
+      --bg:#ffffff; --card:#f6f8ff; --radius:16px; --ring:0 0 0 3px rgba(91,124,250,.35);
     }
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";}
     a{color:inherit;text-decoration:none}
     img{max-width:100%;display:block}
-
-    /* Layout */
     .container{max-width:1100px;margin:0 auto;padding:0 20px}
+
+    /* Header + Nav */
     header{
-      position:sticky;top:0;z-index:50;background:rgba(255,255,255,.8);backdrop-filter:saturate(180%) blur(12px);
-      border-bottom:1px solid rgba(10,20,40,.06);
+      position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);
+      backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid rgba(10,20,40,.06);
     }
     .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
     .brand{display:flex;gap:12px;align-items:center;font-weight:800;letter-spacing:.2px}
-    .brand-logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--brand-1),var(--brand-2));box-shadow:0 6px 20px rgba(91,124,250,.35)}
+    .brand-logo{width:28px;height:28px;border-radius:8px;
+      background:linear-gradient(135deg,var(--brand-1),var(--brand-2));box-shadow:0 6px 20px rgba(91,124,250,.35)}
     .nav-actions{display:flex;gap:10px;align-items:center}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:12px;border:1px solid rgba(10,20,40,.1);background:#fff;cursor:pointer;font-weight:600}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:12px;
+      border:1px solid rgba(10,20,40,.1);background:#fff;cursor:pointer;font-weight:600}
     .btn.primary{background:linear-gradient(135deg,var(--brand-1),var(--brand-2));color:#fff;border:none;box-shadow:0 8px 24px rgba(91,124,250,.35)}
     .btn.primary:focus{outline:var(--ring)}
     .btn.ghost{background:transparent}
 
-    /* Hero */
-    .hero{position:relative;padding:72px 0 30px}
-    .tag{display:inline-block;padding:6px 10px;border-radius:999px;background:linear-gradient(135deg,rgba(91,124,250,.16),rgba(0,212,255,.16));border:1px solid rgba(10,20,40,.08);font-weight:700;font-size:12px;letter-spacing:.4px;text-transform:uppercase}
-    .hero h1{font-size:clamp(28px,5vw,56px);line-height:1.05;margin:16px 0 12px}
-    .hero p{font-size:clamp(16px,2.2vw,20px);color:var(--muted);max-width:760px}
-    .cta{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0 28px}
+    /* HERO #1 — David & Goliath (separate class to avoid collisions) */
+    .hero-dg{
+      position:relative;height:100vh;display:flex;justify-content:center;align-items:center;text-align:center;color:#fff;
+      background:url("/David-Goliath.jpg") no-repeat center center/cover;
+    }
+    .hero-dg::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.55)}
+    .hero-dg .hero-content{position:relative;z-index:1;max-width:820px;padding:20px}
+    .hero-dg h1{font-size:clamp(32px,6vw,64px);margin:0 0 12px}
+    .hero-dg p{font-size:clamp(16px,2.2vw,22px);margin:0 0 22px}
+    .cta-btn{background:#ff4b2b;border:none;padding:14px 26px;font-size:1rem;color:#fff;border-radius:10px;cursor:pointer;text-decoration:none;transition:background .25s}
+    .cta-btn:hover{background:#ff6f56}
+
+    /* HERO #2 — Product intro */
+    .hero-product{position:relative;padding:72px 0 36px;text-align:center}
+    .tag{display:inline-block;padding:6px 10px;border-radius:999px;
+      background:linear-gradient(135deg,rgba(91,124,250,.16),rgba(0,212,255,.16));border:1px solid rgba(10,20,40,.08);
+      font-weight:700;font-size:12px;letter-spacing:.4px;text-transform:uppercase}
+    .hero-product h1{font-size:clamp(28px,5vw,56px);line-height:1.05;margin:16px 0 12px}
+    .hero-product p{font-size:clamp(16px,2.2vw,20px);color:var(--muted);max-width:760px;margin:0 auto}
+    .cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:22px 0 28px}
     .subtext{font-size:14px;color:var(--muted)}
-    .hero-card{margin:28px auto 0;background:linear-gradient(135deg,#fff, #f4f7ff 35%, #eef3ff 65%);border:1px solid rgba(10,20,40,.06);border-radius:20px;padding:22px;box-shadow:0 10px 30px rgba(16,24,40,.08)}
 
-/* david goliath Hero */
-    .hero {
-      position: relative;
-      height: 100vh;
-      background: url("/David-Goliath.jpg") no-repeat center center/cover;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-    }
-    .hero::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.55); /* dark overlay for readability */
-    }
-    .hero-content {
-      position: relative;
-      z-index: 1;
-      max-width: 700px;
-      padding: 20px;
-    }
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-    .hero p {
-      font-size: 1.25rem;
-      margin-bottom: 2rem;
-    }
-    .cta-btn {
-      background: #ff4b2b;
-      border: none;
-      padding: 15px 30px;
-      font-size: 1rem;
-      color: #fff;
-      border-radius: 8px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.3s ease;
-    }
-    .cta-btn:hover {
-      background: #ff6f56;
-    }
-    @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 2rem;
-      }
-      .hero p {
-        font-size: 1rem;
-      }
-    }
-
-
-    /* Feature grid */
+    /* Sections / cards */
     .section{padding:60px 0}
-    .section h2{font-size:clamp(22px,3.6vw,36px);margin:0 0 10px}
+    .section h2{font-size:clamp(22px,3.6vw,36px);margin:0 0 10px;text-align:left}
     .section p.lead{color:var(--muted);max-width:760px}
     .grid{display:grid;gap:16px}
     @media (min-width: 740px){.grid.cols-3{grid-template-columns:repeat(3,1fr)}.grid.cols-2{grid-template-columns:repeat(2,1fr)}}
-    .card{background:var(--card);border:1px solid rgba(10,20,40,.08);border-radius:var(--radius);padding:18px;transition:transform .25s ease, box-shadow .25s ease}
+    .card{background:var(--card);border:1px solid rgba(10,20,40,.08);border-radius:var(--radius);padding:18px;transition:transform .25s, box-shadow .25s}
     .card:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(16,24,40,.1)}
     .icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--brand-1),var(--brand-2));box-shadow:0 8px 20px rgba(91,124,250,.35)}
     .card h3{margin:10px 0 6px;font-size:18px}
     .card p{margin:0;color:var(--muted);font-size:15px}
 
-    /* Media showcase */
+    /* “Browser chrome” mock frame (used in articles if needed) */
     .screen{border-radius:16px;border:1px solid rgba(10,20,40,.08);overflow:hidden;background:#fff;box-shadow:0 10px 24px rgba(16,24,40,.08)}
     .screen .chrome{display:flex;gap:8px;align-items:center;padding:8px 10px;background:linear-gradient(180deg,#f9fbff,#f0f4ff);border-bottom:1px solid rgba(10,20,40,.06)}
     .dot{width:10px;height:10px;border-radius:50%;background:#d9dde7}
     .url{flex:1;height:32px;border-radius:8px;border:1px solid rgba(10,20,40,.1);background:#fff;padding:0 12px;display:flex;align-items:center;color:#6b7486;font-size:14px}
-    .viewport{aspect-ratio: 16/9; background:linear-gradient(135deg,#eef2ff,#ffffff); display:flex;align-items:center;justify-content:center;color:#94a3b8}
 
-    /* FAQ */
+    /* Article styles */
+    article{max-width:820px;margin:0 auto}
+    .page-title{text-align:center;margin-bottom:10px}
+    blockquote{margin:20px 0;padding:15px 20px;background:#f0f0f0;border-left:5px solid #0070c9;font-style:italic}
+    .article-meta{color:var(--muted);font-size:14px;margin-bottom:16px;text-align:center}
+
+    /* FAQ / Footer */
     details{background:var(--card);border:1px solid rgba(10,20,40,.08);border-radius:14px;padding:14px}
     summary{cursor:pointer;font-weight:700}
     details p{color:var(--muted)}
-
-    /* Footer */
     footer{padding:40px 0;border-top:1px solid rgba(10,20,40,.06);color:var(--muted)}
 
     /* Animations */
     .reveal{opacity:0;transform:translateY(8px);transition:opacity .6s ease, transform .6s ease}
     .reveal.in{opacity:1;transform:translateY(0)}
-    @media (prefers-reduced-motion: reduce){
-      .card:hover{transform:none}
-      .reveal{transition:none}
-    }
+    @media (prefers-reduced-motion: reduce){.card:hover{transform:none}.reveal{transition:none}}
 
-    blockquote { margin: 20px 0; padding: 15px 20px; background: #f0f0f0; border-left: 5px solid #0070c9; font-style: italic; }
-    ul { margin: 15px 0 15px 20px; }
-    li { margin-bottom: 10px; }
-    
-</style>
+    /* Search bars under header */
+    #search-container{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;background-color:#6200EE;color:#fff;justify-content:center}
+    #bookmark-bar{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;justify-content:center;background-color:#f5f5f5}
+    #bookmark-bar button{padding:6px 10px;border-radius:6px;border:none;background-color:#BB86FC;color:#000;font-size:14px;cursor:pointer}
+    #bookmark-bar button:active{background-color:#9C47FF}
+  </style>
 </head>
 <body>
-<!-- Header  -->
-<header>
-  <div class="container nav">
-    <div class="brand">
-      <div class="brand-logo" aria-hidden="true"></div>
-      <a href="#top" aria-label="ChromaBrowser Home">ChromaBrowser</a>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true"></div>
+        <a href="#top" aria-label="ChromaBrowser Home">ChromaBrowser</a>
+      </div>
+      <nav class="nav-actions">
+        <a class="btn ghost" href="#features">Features</a>
+        <a class="btn ghost" href="#privacy">Privacy</a>
+        <a class="btn ghost" href="#transparency">Transparency</a>
+        <a class="btn primary" href="#download" id="downloadButton">Get Chroma</a>
+      </nav>
     </div>
-    <nav class="nav-actions">
-      <a class="btn ghost" href="#features">Features</a>
-      <a class="btn ghost" href="#privacy">Privacy</a>
-      <a class="btn primary" href="#download" id="downloadButton">Get Chroma</a>
-    </nav>
-  </div>
 
-<!-- F8 Search Container Below Header -->
-<!-- Search Container Below Header -->
-<div id="search-container" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;background-color:#6200EE;color:#fff;justify-content:center;">
-  <input type="text" id="search-query" placeholder="Search with Chroma..." style="flex:1;min-width:150px;padding:8px;border-radius:6px;border:none;font-size:16px;">
-  <select id="search-engine" style="padding:6px 8px;border-radius:6px;border:none;font-size:14px;">
-    <option value="https://www.google.com/search?q=">Google</option>
-    <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
-    <option value="https://www.bing.com/search?q=">Bing</option>
-    <option value="https://search.yahoo.com/search?p=">Yahoo</option>
-    <option value="https://www.qwant.com/?q=">Qwant</option>
-    <option value="https://www.ecosia.org/search?q=">Ecosia</option>
-  <option value="https://www.startpage.com/do/search?query=">Startpage</option>
-    <option value="https://www.yandex.com/search/?text=">Yandex</option>
-    <option value="https://www.baidu.com/s?wd=">Baidu</option>
-    <option value="https://www.wikipedia.org/w/index.php?search=">Wikipedia</option>
-    <option value="https://stackoverflow.com/search?q=">StackOverflow</option>
-    <option value="https://stackexchange.com/search?q=">StackExchange</option>
-    <option value="https://github.com/search?q=">GitHub</option>
-    <option value="https://swisscows.com/web?query=">Swisscows</option>
-    <option value="https://www.mojeek.com/search?q=">Mojeek</option>
-  </select>
-  <button id="search-button" style="padding:8px 16px;border-radius:8px;border:none;background-color:#FFD600;color:#000;font-weight:bold;font-size:16px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.3);transition:background 0.2s;">Go</button>
-</div>
+    <!-- Search Container -->
+    <div id="search-container">
+      <input type="text" id="search-query" placeholder="Search with Chroma..." style="flex:1;min-width:150px;padding:8px;border-radius:6px;border:none;font-size:16px;">
+      <select id="search-engine" style="padding:6px 8px;border-radius:6px;border:none;font-size:14px;">
+        <option value="https://www.google.com/search?q=">Google</option>
+        <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
+        <option value="https://www.bing.com/search?q=">Bing</option>
+        <option value="https://search.yahoo.com/search?p=">Yahoo</option>
+        <option value="https://www.qwant.com/?q=">Qwant</option>
+        <option value="https://www.ecosia.org/search?q=">Ecosia</option>
+        <option value="https://www.startpage.com/do/search?query=">Startpage</option>
+        <option value="https://www.yandex.com/search/?text=">Yandex</option>
+        <option value="https://www.baidu.com/s?wd=">Baidu</option>
+        <option value="https://www.wikipedia.org/w/index.php?search=">Wikipedia</option>
+        <option value="https://stackoverflow.com/search?q=">StackOverflow</option>
+        <option value="https://stackexchange.com/search?q=">StackExchange</option>
+        <option value="https://github.com/search?q=">GitHub</option>
+        <option value="https://swisscows.com/web?query=">Swisscows</option>
+        <option value="https://www.mojeek.com/search?q=">Mojeek</option>
+      </select>
+      <button id="search-button" style="padding:8px 16px;border-radius:8px;border:none;background-color:#FFD600;color:#000;font-weight:bold;font-size:16px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.3);">Go</button>
+    </div>
 
-<!-- Minimal Bookmarks Bar -->
-<div id="bookmark-bar" style="display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;justify-content:center;background-color:#f5f5f5;">
-  <button style="padding:6px 10px;border-radius:6px;border:none;background-color:#BB86FC;color:#000;font-size:14px;cursor:pointer;">Google</button>
-  <button style="padding:6px 10px;border-radius:6px;border:none;background-color:#BB86FC;color:#000;font-size:14px;cursor:pointer;">Wikipedia</button>
-  <button style="padding:6px 10px;border-radius:6px;border:none;background-color:#BB86FC;color:#000;font-size:14px;cursor:pointer;">StackOverflow</button>
-</div>
-
-<script>
-const queryInput = document.getElementById("search-query");
-const engineSelect = document.getElementById("search-engine");
-const searchButton = document.getElementById("search-button");
-// Persist last selected engine
-const SEARCH_ENGINE_KEY = "chroma_last_engine";
-const savedEngine = localStorage.getItem(SEARCH_ENGINE_KEY);
-if (savedEngine) engineSelect.value = savedEngine;
-engineSelect.addEventListener("change", () => {
-    localStorage.setItem(SEARCH_ENGINE_KEY, engineSelect.value);
-});
-// Perform search
-function performSearch() {
-    const query = encodeURIComponent(queryInput.value.trim());
-    if (!query) return;
-    const engineUrl = engineSelect.value;
-    const fullUrl = engineUrl + query;
-    window.open(fullUrl, "_self");
-}
-//
-searchButton.addEventListener("click", performSearch);
-queryInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") performSearch();
-});
-// Bookmarks click events
-const bookmarks = [
-  { name: "Google", url: "https://www.google.com" },
-  { name: "Wikipedia", url: "https://www.wikipedia.org" },
-  { name: "StackOverflow", url: "https://stackoverflow.com" }
-];
-//
-const bookmarkButtons = document.querySelectorAll("#bookmark-bar button");
-bookmarkButtons.forEach((btn, index) => {
-  btn.addEventListener("click", () => {
-    window.open(bookmarks[index].url, "_self");
-  });
-// Optional: touch feedback
-  btn.addEventListener("touchstart", () => { btn.style.backgroundColor = "#9C47FF"; });
-  btn.addEventListener("touchend", () => { btn.style.backgroundColor = "#BB86FC"; });
-});
-</script>
-
-</header>
-
+    <!-- Minimal Bookmarks Bar -->
+    <div id="bookmark-bar">
+      <button>Google</button>
+      <button>Wikipedia</button>
+      <button>StackOverflow</button>
+    </div>
+  </header>
 
   <main id="top">
-    <!-- HERO -->
-    <section class="hero container">
+
+    <!-- HERO #1: David & Goliath -->
+    <section class="hero-dg" aria-label="David and Goliath Hero">
+      <div class="hero-content">
+        <h1>David vs. Goliath</h1>
+        <p>ChromaBrowser stands against the giants. Fast, private, and built for users — not corporations.</p>
+        <a href="#download" class="cta-btn">Download Now</a>
+      </div>
+    </section>
+
+    <!-- HERO #2: Product intro -->
+    <section class="hero-product container">
       <span class="tag">Fast • Private • Lightweight</span>
-        <h1>ChromaBrowser Browse faster. Search smarter. Keep your data yours.</h1>
-        
+      <h1>Browse faster. Search smarter. Keep your data yours.</h1>
       <p>Designed for speed and privacy. From first click to final tab, everything is optimized to keep you in flow—without ads, trackers, or bloat.</p>
       <div class="cta">
         <a class="btn primary" href="#download">Get Chroma Browser</a>
         <a class="btn" href="#how">See how it works</a>
       </div>
       <div class="subtext">No accounts • No tracking • Works great on modest hardware</div>
+    </section>
 
-      <div class="hero-card reveal" aria-hidden="true">
-        <div class="screen">
-          <div class="chrome">
-            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-            <div class="url">https://chromabrowser.com</div>
-          </div>
-             
-          <div class="hero-content">
-      <p>The independent browser challenging the giants.<br>
-      Fast, private, and built for users — not corporations.</p>
-    <a href="#" class="cta-btn">Download Now</a>
-    </div>
-             
-          <div class="viewport">
-       
- <div class="container">
-  <h1 style="font-size:2.2em; text-align:center; margin-bottom:20px;">David vs. Goliath</h1>
-  <p>
-    For too long, the tech giants have controlled the flow of discovery, search, and choice. 
-    They decide what you see, what you don’t, and which voices are allowed to rise. 
-    Independent creators and small developers are locked out, buried, or forced to pay endlessly 
-    just to exist in their walled gardens.
-  </p>
-  <p>
-    But history shows: the bigger they are, the harder they fall. 
-    <strong>David defeated Goliath not with size or money, but with courage, clarity, and truth.</strong> 
-    And so it is again today. A single app, a single voice, a single act of defiance can pierce 
-    the armor of monopoly.
-  </p>
-  <blockquote style="border-left:4px solid #555; padding-left:15px; margin:20px 0; font-style:italic;">
-    What goes up must come down. The giants of today will not stand forever.
-  </blockquote>
-  <p>
-    <strong>ChromaBrowser</strong> exists to prove that freedom, innovation, and fairness 
-    are still possible. The choice should belong to the people, not the gatekeepers.  
-  </p>
-  <p style="text-align:center; font-weight:bold; margin-top:30px;">
-    This is not just an app. It’s a stand.<br>
-    David vs. Goliath — and David always wins.
-  </p>
+    <!-- ARTICLE 1: David & Goliath manifesto -->
+    <section id="manifesto" class="section">
+      <article class="container">
+        <h2 class="page-title">David vs. Goliath</h2>
+        <div class="article-meta">An open note on platform power, competition, and why ChromaBrowser exists.</div>
+        <p>For too long, the tech giants have controlled the flow of discovery, search, and choice. They decide what you see, what you don’t, and which voices are allowed to rise. Independent creators and small developers are locked out, buried, or forced to pay endlessly just to exist in their walled gardens.</p>
+        <p>But history shows: the bigger they are, the harder they fall. <strong>David defeated Goliath not with size or money, but with courage, clarity, and truth.</strong> And so it is again today. A single app, a single voice, a single act of defiance can pierce the armor of monopoly.</p>
+        <blockquote>What goes up must come down. The giants of today will not stand forever.</blockquote>
+        <p><strong>ChromaBrowser</strong> exists to prove that freedom, innovation, and fairness are still possible. The choice should belong to the people, not the gatekeepers.</p>
+        <p style="text-align:center;font-weight:bold;margin-top:18px;">This is not just an app. It’s a stand.<br/>David vs. Goliath — and David always wins.</p>
+      </article>
+    </section>
 
-    </div>
-        
-     
-<div class="container">
-    <h1>Why You Can’t Find Chroma Browser on the App Store</h1>
-    
-    <p><strong>Even though Chroma Browser is fully approved, it’s effectively invisible in App Store keyword searches.</strong></p>
-    
-    <p>Search for “browser” on the App Store and you won’t see it. Other apps in the same category appear — but ours doesn’t. Users can only find Chroma Browser if they know the exact name.</p>
-    
-    <h2>Why This Matters</h2>
-    <ul>
-        <li><strong>Mandatory $99 Annual Fee:</strong> Developers must pay to keep apps available, even if Apple is withholding earnings.</li>
-        <li><strong>Opaque Review Process:</strong> Updates and bug fixes can be delayed unpredictably, while Apple’s own apps face no such restrictions.</li>
-        <li><strong>Keyword Suppression:</strong> Limits discoverability and stifles innovation.</li>
-    </ul>
-    
-    <p>We’ve filed formal complaints with both the <strong>FTC</strong> and the <strong>DOJ</strong> about these practices.</p>
-    
-    <blockquote>
-    “Chroma Browser is fully approved, but buried in App Store search results, making it invisible to users searching for ‘browser.’ Apple’s control effectively erases new competitors, favoring entrenched apps and limiting consumer choice.”
-    </blockquote>
-    
-    <p>We believe in <strong>transparency, fairness, and innovation</strong>. If you’re a developer experiencing similar issues, document your experience and consider reporting it — your voice matters.</p>
-</div>
-
-          </div>
-        </div>
-      </div>
+    <!-- ARTICLE 2: Transparency / App Store visibility -->
+    <section id="transparency" class="section" style="background:linear-gradient(180deg,#fbfdff,#f2f6ff)">
+      <article class="container">
+        <h2 class="page-title">Why You Can’t Find Chroma Browser on the App Store</h2>
+        <div class="article-meta">Transparency note on App Store keyword visibility and competition.</div>
+        <p><strong>Even though Chroma Browser is fully approved, it’s effectively invisible in App Store keyword searches.</strong></p>
+        <p>Search for “browser” on the App Store and you won’t see it. Other apps in the same category appear — but ours doesn’t. Users can only find Chroma Browser if they know the exact name.</p>
+        <h3>Why This Matters</h3>
+        <ul>
+          <li><strong>Mandatory $99 Annual Fee:</strong> Developers must pay to keep apps available, even if Apple is withholding earnings.</li>
+          <li><strong>Opaque Review Process:</strong> Updates and bug fixes can be delayed unpredictably, while Apple’s own apps face no such restrictions.</li>
+          <li><strong>Keyword Suppression:</strong> Limits discoverability and stifles innovation.</li>
+        </ul>
+        <p>We’ve filed formal complaints with both the <strong>FTC</strong> and the <strong>DOJ</strong> about these practices.</p>
+        <blockquote>“Chroma Browser is fully approved, but buried in App Store search results, making it invisible to users searching for ‘browser.’ Apple’s control effectively erases new competitors, favoring entrenched apps and limiting consumer choice.”</blockquote>
+        <p>We believe in <strong>transparency, fairness, and innovation</strong>. If you’re a developer experiencing similar issues, document your experience and consider reporting it — your voice matters.</p>
+      </article>
     </section>
 
     <!-- FEATURES -->
     <section id="features" class="section container">
       <h2>Built for power users. Perfect for everyone.</h2>
-      <p class="lead">Stay fast and focused with a browser that cuts friction. Chroma brings multi‑engine search, custom shortcuts, and optional AI together in a clean, minimalist UI.</p>
+      <p class="lead">Stay fast and focused with a browser that cuts friction. Chroma brings multi-engine search, custom shortcuts, and optional AI together in a clean, minimalist UI.</p>
       <div class="grid cols-3" style="margin-top:18px">
-        <div class="card reveal">
-          <div class="icon" aria-hidden="true"></div>
-          <h3>Lightning‑fast performance</h3>
-          <p>Instant startup, snappy tabs, and smooth scrolling—optimized from first paint to page load.</p>
-        </div>
-        <div class="card reveal">
-          <div class="icon" aria-hidden="true"></div>
-          <h3>Multi‑engine search built‑in</h3>
-          <p>Search Google, DuckDuckGo, YouTube, Wikipedia and more—without extensions.</p>
-        </div>
-        <div class="card reveal">
-          <div class="icon" aria-hidden="true"></div>
-          <h3>Custom shortcuts & themes</h3>
-          <p>Pin favorite sites, map quick actions, and tweak the UI to fit your flow.</p>
-        </div>
-        <div class="card reveal">
-          <div class="icon" aria-hidden="true"></div>
-          <h3>AI‑ready when you are</h3>
-          <p>Optional ChatGPT integration for smarter queries and summaries—only if you enable it.</p>
-        </div>
-        <div class="card reveal">
-          <div class="icon" aria-hidden="true"></div>
-          <h3>Popup & tab modes</h3>
-          <p>Work in a focused popup or full‑tab experience. Your choice, your rhythm.</p>
-        </div>
-        <div class="card reveal">
-          <div class="icon" aria-hidden="true"></div>
-          <h3>Privacy‑first</h3>
-          <p>No tracking. No accounts. No bloat. Your data stays on your device.</p>
-        </div>
+        <div class="card reveal"><div class="icon" aria-hidden="true"></div><h3>Lightning-fast performance</h3><p>Instant startup, snappy tabs, and smooth scrolling—optimized from first paint to page load.</p></div>
+        <div class="card reveal"><div class="icon" aria-hidden="true"></div><h3>Multi-engine search built-in</h3><p>Search Google, DuckDuckGo, YouTube, Wikipedia and more—without extensions.</p></div>
+        <div class="card reveal"><div class="icon" aria-hidden="true"></div><h3>Custom shortcuts & themes</h3><p>Pin favorite sites, map quick actions, and tweak the UI to fit your flow.</p></div>
+        <div class="card reveal"><div class="icon" aria-hidden="true"></div><h3>AI-ready when you are</h3><p>Optional ChatGPT integration for smarter queries and summaries—only if you enable it.</p></div>
+        <div class="card reveal"><div class="icon" aria-hidden="true"></div><h3>Popup & tab modes</h3><p>Work in a focused popup or full-tab experience. Your choice, your rhythm.</p></div>
+        <div class="card reveal"><div class="icon" aria-hidden="true"></div><h3>Privacy-first</h3><p>No tracking. No accounts. No bloat. Your data stays on your device.</p></div>
       </div>
     </section>
 
-    <!-- SHOWCASE / HOW IT WORKS -->
+    <!-- HOW IT WORKS -->
     <section id="how" class="section" style="background:linear-gradient(180deg,#fbfdff,#f2f6ff)">
       <div class="container">
         <h2>How it works</h2>
         <p class="lead">Chroma blends a clean UI with powerful tools. Here’s a quick look at the flow.</p>
         <div class="grid cols-2" style="margin-top:18px">
           <div class="screen reveal">
-            <div class="chrome">
-              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-              <div class="url">omnibox: type once, search anywhere</div>
-            </div>
-            <div class="viewport">GIF/Video: omnibox with multi‑engine results</div>
+            <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="url">omnibox: type once, search anywhere</div></div>
+            <div style="aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;color:#94a3b8">GIF/Video: omnibox with multi-engine results</div>
           </div>
           <div class="screen reveal">
-            <div class="chrome">
-              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-              <div class="url">popup mode: quick tasks, zero friction</div>
-            </div>
-            <div class="viewport">GIF/Video: popup workflow & shortcuts</div>
+            <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="url">popup mode: quick tasks, zero friction</div></div>
+            <div style="aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;color:#94a3b8">GIF/Video: popup workflow & shortcuts</div>
           </div>
         </div>
       </div>
@@ -382,43 +235,10 @@ bookmarkButtons.forEach((btn, index) => {
 
     <!-- PRIVACY / TRUST -->
     <section id="privacy" class="section container">
-      
- <!-- Only Browser Incognito Earth section -->
-<!-- W/slide-up animation -->
-<section id="incognito-tagline" style="text-align:center;margin-top:16px;padding:24px 12px;background-color:#EDE7F6;color:#000;box-shadow:0 4px 12px rgba(0,0,0,0.1);border-radius:8px;max-width:650px;margin-left:auto;margin-right:auto;opacity:0;transform:translateY(30px);transition:all 0.6s ease;">
-  <h2 style="font-size:1.8rem;font-weight:bold;margin-bottom:12px;">The Only Truly Incognito Browser on Earth</h2>
-  <p style="font-size:1rem;line-height:1.5;">
-    Chroma never stores history or sessions — only your bookmarks are saved. Focused on privacy, minimalism, and speed. No gimmicks, no trackers, just pure anonymous browsing.
-  </p>
-</section>
-<script>
-// Slide-up animation when section enters viewport
-function isInViewport(el) {
-    const rect = el.getBoundingClientRect();
-    return (
-        rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.bottom >= 0
-    );
-}
-const incognitoSection = document.getElementById("incognito-tagline");
-
-function checkSlideUp() {
-    if (isInViewport(incognitoSection)) {
-        incognitoSection.style.opacity = 1;
-        incognitoSection.style.transform = "translateY(0)";
-        window.removeEventListener("scroll", checkSlideUp); // animate only once
-    }
-}
-window.addEventListener("scroll", checkSlideUp);
-window.addEventListener("load", checkSlideUp);
-</script>
-
-<br><br>
-  
       <h2>Privacy that’s real, not a checkbox</h2>
       <div class="grid cols-3" style="margin-top:18px">
         <div class="card reveal"><h3>No tracking</h3><p>We don’t collect your browsing data. Period.</p></div>
-        <div class="card reveal"><h3>No accounts</h3><p>Use Chroma without sign‑ups, logins, or lock‑in.</p></div>
+        <div class="card reveal"><h3>No accounts</h3><p>Use Chroma without sign-ups, logins, or lock-in.</p></div>
         <div class="card reveal"><h3>No bloat</h3><p>Lightweight by design—saves memory and battery.</p></div>
       </div>
     </section>
@@ -427,36 +247,26 @@ window.addEventListener("load", checkSlideUp);
     <section class="section container">
       <h2>FAQ</h2>
       <div class="grid cols-2" style="margin-top:10px">
-        <details class="reveal"><summary>Is Chroma free?</summary><p>Yes. Core features are free. If we add optional pro features later, Chroma will remain fast and privacy‑first.</p></details>
-        <details class="reveal"><summary>Which platforms are supported?</summary><p>Initially desktop Chromium‑based browsers. More platforms may follow.</p></details>
+        <details class="reveal"><summary>Is Chroma free?</summary><p>Yes. Core features are free. If we add optional pro features later, Chroma will remain fast and privacy-first.</p></details>
+        <details class="reveal"><summary>Which platforms are supported?</summary><p>Initially desktop Chromium-based browsers. More platforms may follow.</p></details>
         <details class="reveal"><summary>Does Chroma sell my data?</summary><p>No. We don’t track or sell your data.</p></details>
- 
       </div>
     </section>
 
-    <!-- DOWNLOAD / CTA -->
+    <!-- DOWNLOAD -->
     <section id="download" class="section" style="background:linear-gradient(180deg,#ffffff,#f6f8ff)">
       <div class="container">
         <h2>Get Chroma Browser</h2>
         <p class="lead">Install in seconds. Your default search engine and settings remain your choice.</p>
         <div class="cta">
-         
-<!-- Replaced href with live store URL -->
- 
-          <a class="btn primary" href="https://apps.apple.com/us/app/chroma-browser/id6751072539" id="storeLink">☀️ ⚡Download now from: App Store</a>
-           
-  <!-- Replace href with live store URLs -->
-      
-    <div style="display:block; width:100%; margin:0 auto;"><br>
-<a href="https://github.com/appcod8/Chroma/releases/download/Browser/Chroma-1.0b.apk" target="_blank" style="display:inline-block; padding:3px 8px; margin:4px; background-color:teal; color:white; border-radius:5px; text-decoration:none;">☀️ ⚡Download: Android App
-</a><br>  </div>
-          
+          <a class="btn primary" href="https://apps.apple.com/us/app/chroma-browser/id6751072539" id="storeLink">☀️ ⚡ Download on the App Store</a>
+          <a class="btn" href="https://github.com/appcod8/Chroma/releases/download/Browser/Chroma-1.0b.apk" target="_blank">☀️ ⚡ Download Android APK</a>
           <a class="btn" href="mailto:support@chromabrowser.com?subject=Chroma%20Browser%20Support">Contact Support</a>
         </div>
         <div class="subtext">By installing, you agree to the <a href="/privacy">Privacy Policy</a> and <a href="https://github.com/appcod8/chroma.privacy">Terms</a>.</div>
       </div>
-      
     </section>
+
   </main>
 
   <footer>
@@ -471,85 +281,69 @@ window.addEventListener("load", checkSlideUp);
   </footer>
 
   <script>
-    // Smooth scroll for in‑page links
+    // Smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(a=>{
       a.addEventListener('click', e=>{
-        const id = a.getAttribute('href');
-        if(id.length>1){
-          e.preventDefault();
-          document.querySelector(id)?.scrollIntoView({behavior:'smooth', block:'start'});
-        }
+        const id=a.getAttribute('href');
+        if(id.length>1){e.preventDefault();document.querySelector(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
       });
     });
 
-    // Reveal animation on scroll
-    const io = new IntersectionObserver((entries)=>{
+    // Reveal on scroll
+    const io=new IntersectionObserver((entries)=>{
       entries.forEach(({isIntersecting,target})=>{
-        if(isIntersecting){ target.classList.add('in'); io.unobserve(target); }
+        if(isIntersecting){target.classList.add('in');io.unobserve(target);}
       });
-    }, {threshold:.15});
+    },{threshold:.15});
     document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-    // Placeholder for apps stores links 
-    const storeLink = document.getElementById('storeLink');
-    const downloadButton = document.getElementById('downloadButton');
+    // Search box logic
+    const queryInput=document.getElementById("search-query");
+    const engineSelect=document.getElementById("search-engine");
+    const searchButton=document.getElementById("search-button");
+    const SEARCH_ENGINE_KEY="chroma_last_engine";
+    const savedEngine=localStorage.getItem(SEARCH_ENGINE_KEY);
+    if(savedEngine) engineSelect.value=savedEngine;
+    engineSelect.addEventListener("change",()=>localStorage.setItem(SEARCH_ENGINE_KEY,engineSelect.value));
+    function performSearch(){
+      const q=encodeURIComponent((queryInput.value||"").trim()); if(!q) return;
+      window.open(engineSelect.value+q,"_self");
+    }
+    searchButton.addEventListener("click",performSearch);
+    queryInput.addEventListener("keydown",(e)=>{if(e.key==="Enter") performSearch();});
+    // Bookmarks
+    const bookmarks=[{name:"Google",url:"https://www.google.com"},{name:"Wikipedia",url:"https://www.wikipedia.org"},{name:"StackOverflow",url:"https://stackoverflow.com"}];
+    document.querySelectorAll("#bookmark-bar button").forEach((btn,i)=>btn.addEventListener("click",()=>window.open(bookmarks[i].url,"_self")));
+
+    // Store link placeholder safety (kept in case href is '#')
     function wirePlaceholder(el){
-      el?.addEventListener('click', (e)=>{
-        const href = el.getAttribute('href');
-        if(href === '#' || href === '' || href === null){
-          e.preventDefault();
-          alert('The store listing is coming soon. Check back after approval.');
-        }
+      el?.addEventListener('click',(e)=>{
+        const href=el.getAttribute('href'); if(href==="#"||href===""||href===null){e.preventDefault();alert('The store listing is coming soon.');}
       });
     }
-    wirePlaceholder(storeLink);
-    wirePlaceholder(downloadButton);
+    wirePlaceholder(document.getElementById('storeLink'));
+    wirePlaceholder(document.getElementById('downloadButton'));
+
+    // Incognito tagline slide-up (optional hook if you add it later)
+    function isInViewport(el){const r=el.getBoundingClientRect();return r.top<=innerHeight && r.bottom>=0}
+    const incog=document.getElementById("incognito-tagline");
+    function checkSlideUp(){ if(!incog) return; if(isInViewport(incog)){incog.style.opacity=1;incog.style.transform="translateY(0)";window.removeEventListener("scroll",checkSlideUp)}}
+    window.addEventListener("scroll",checkSlideUp); window.addEventListener("load",checkSlideUp);
   </script>
-  
-  
-<!-- Floating Scroll-to-Top Button -->
-<!--
-<button id="scroll-top" style="position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;border:none;background-color:#BB86FC;color:#000;font-size:20px;font-weight:bold;cursor:pointer;box-shadow:0 4px 8px rgba(0,0,0,0.3);z-index:1000;">⬆️</button>
-<script>
-// Scroll to top (⬆️ Searh) button
-const scrollTopBtn = document.getElementById("scroll-top");
-scrollTopBtn.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
-// Show button only after scrolling down
 
-window.addEventListener("scroll", () => {
-  if (window.scrollY > 100) {
-    scrollTopBtn.style.display = "block";
-  } else {
-    scrollTopBtn.style.display = "none";
-  }
-});
-// Initially hidden
-
-scrollTopBtn.style.display = "none";
-</script>
--->
-
-<!-- Toolbar Quick Access - Logic 
-     only Homepage button works, other
-     need implenting in code later  -->
-<div class="toolbar" style="position:fixed;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:12px;padding:8px 16px;background:rgba(255,255,255,0.95);border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999;">
-  <button id="backBtn" style="padding:8px 12px;border:none;background:#eee;border-radius:8px;font-size:1rem;">←</button>
-  <button id="forwardBtn" style="padding:8px 12px;border:none;background:#eee;border-radius:8px;font-size:1rem;">→</button>
-  <button id="homeBtn" style="padding:8px 12px;border:none;background:#eee;border-radius:8px;font-size:1rem;">🏠</button>
-  <button id="tabsBtn" style="padding:8px 12px;border:none;background:#eee;border-radius:8px;font-size:1rem;">Tabs</button>
-</div>
-<script>
-  // Homepage button
-  document.getElementById("homeBtn").addEventListener("click", () => {
-    window.location.href = "https://chromabrowser.com/";
-  });
-  // Optional: back/forward buttons
-  document.getElementById("backBtn").addEventListener("click", () => window.history.back());  document.getElementById("forwardBtn").addEventListener("click", () => window.history.forward());
-  // Tabs button placeholder
-  document.getElementById("tabsBtn").addEventListener("click", () => alert("Tabs manager coming soon!"));
-</script>
+  <!-- Optional floating toolbar -->
+  <div class="toolbar" style="position:fixed;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:12px;padding:8px 16px;background:rgba(255,255,255,0.95);border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:999;">
+    <button id="backBtn" style="padding:8px 12px;border:none;background:#eee;border-radius:8px;font-size:1rem;">←</button>
+    <button id="forwardBtn" style="padding:8px 12px;border:none;background:#eee;border-radius:8px;font-size:1rem;">→</button>
+    <button id="homeBtn" style="padding:8px 12px;border:none;background:#eee;border-radius:8px;font-size:1rem;">🏠</button>
+    <button id="tabsBtn" style="padding:8px 12px;border:none;background:#eee;border-radius:8px;font-size:1rem;">Tabs</button>
+  </div>
+  <script>
+    document.getElementById("homeBtn").addEventListener("click",()=>location.href="/");
+    document.getElementById("backBtn").addEventListener("click",()=>history.back());
+    document.getElementById("forwardBtn").addEventListener("click",()=>history.forward());
+    document.getElementById("tabsBtn").addEventListener("click",()=>alert("Tabs manager coming soon!"));
+  </script>
 
 </body>
 </html>
