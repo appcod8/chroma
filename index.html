@@ -139,8 +139,8 @@
 
     <!-- Minimal Bookmarks Bar -->
     <div id="bookmark-bar">
-      <button>Google</button>
-      <button>Wikipedia</button>
+      <button>SpaceEdge</button>
+      <button>Wiki</button>
       <button>StackOverflow</button>
     </div>
   </header>
@@ -311,7 +311,7 @@
     searchButton.addEventListener("click",performSearch);
     queryInput.addEventListener("keydown",(e)=>{if(e.key==="Enter") performSearch();});
     // Bookmarks
-    const bookmarks=[{name:"Google",url:"https://www.google.com"},{name:"Wikipedia",url:"https://www.wikipedia.org"},{name:"StackOverflow",url:"https://stackoverflow.com"}];
+    const bookmarks=[{name:"SpaceEdge",url:"https://spaceedge.com"},{name:"Wiki",url:"https://www.wikipedia.org"},{name:"StackOverflow",url:"https://stackoverflow.com"}];
     document.querySelectorAll("#bookmark-bar button").forEach((btn,i)=>btn.addEventListener("click",()=>window.open(bookmarks[i].url,"_self")));
 
     // Store link placeholder safety (kept in case href is '#')
