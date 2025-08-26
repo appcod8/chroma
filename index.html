@@ -47,6 +47,11 @@
   background-size: cover; /* contain fit entire image */
   background-color: #000;   /* fallback background */
 }
+.hero-dg.full-view {
+  background-size: contain; /* toggle to show entire image */
+  background-position: center;
+  background-color: #000;
+}
     .hero-dg::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.55)}
     .hero-dg .hero-content{position:relative;z-index:1;max-width:820px;padding:20px}
     .hero-dg h1{font-size:clamp(32px,6vw,64px);margin:0 0 12px}
@@ -352,5 +357,13 @@
     document.getElementById("tabsBtn").addEventListener("click",()=>alert("Tabs manager coming soon!"));
   </script>
 
+<!-- hero full img dispkay -->
+<script>
+document.querySelector('.hero-dg').addEventListener('click', e => {
+  e.currentTarget.classList.toggle('full-view');
+});
+</script>
+
+</body>
 </body>
 </html>
