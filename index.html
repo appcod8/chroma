@@ -35,10 +35,18 @@
     .btn.ghost{background:transparent}
 
     /* HERO #1 — David & Goliath (separate class to avoid collisions) */
-    .hero-dg{
-      position:relative;height:100vh;display:flex;justify-content:center;align-items:center;text-align:center;color:#fff;
-      background:url("/David-Goliath.jpg") no-repeat center center/cover;
-    }
+.hero-dg {
+  height: 100vh; /* full screen height */
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #fff;
+  background: url("/David-Goliath.jpg") no-repeat center top;
+  background-size: contain; /* fit entire image */
+  background-color: #000;   /* fallback background */
+}
     .hero-dg::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.55)}
     .hero-dg .hero-content{position:relative;z-index:1;max-width:820px;padding:20px}
     .hero-dg h1{font-size:clamp(32px,6vw,64px);margin:0 0 12px}
