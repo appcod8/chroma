@@ -339,7 +339,7 @@ const newTabToggle = document.createElement("button");
 newTabToggle.title = "Open results in new tab";
 newTabToggle.style.cssText = `
     width:36px; height:36px; padding:0; margin-left:4px; border-radius:6px; border:none; 
-    background:#55f; font-size:18px; color:#fff; cursor:pointer;
+    background:#69f; font-size:18px; color:#fff; cursor:pointer;
 `;
 newTabToggle.innerHTML = "&#128279;"; // 🔗 only
 newTabToggle.style.width = "26px"; //stays small
@@ -353,7 +353,7 @@ newTabToggle.addEventListener("click", () => {
         newTabToggle.style.background = "#FFAA00"; // darker active
         newTabToggle.innerHTML =  '&#128279;<span style="display:block;font-size:8px; margin:2px;">New</span>';
     } else {
-        newTabToggle.style.background = "#969"; // default
+        newTabToggle.style.background = "#69f"; // default
         newTabToggle.innerHTML = "&#128279;";
     }
 });
