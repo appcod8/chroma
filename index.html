@@ -341,8 +341,8 @@ newTabToggle.style.cssText = `
     width:36px; height:36px; padding:0; margin-left:4px; border-radius:6px; border:none; 
     background:#555; font-size:18px; color:#fff; cursor:pointer;
 `;
-newTabToggle.innerHTML = "&#128279;"; // 🔗 icon
-
+newTabToggle.innerHTML = "&#128279;"; // 🔗 only
+newTabToggle.style.width = "26px"; //stays small
 // Insert the toggle after engine select, before Go button
 engineSelect.insertAdjacentElement("afterend", newTabToggle);
 
