@@ -313,58 +313,64 @@
 
     // Searchbox Input Engines logic
 // query persistence 
-// Existing elements
+// --- Search Elements ---
 const queryInput = document.getElementById("search-query");
 const engineSelect = document.getElementById("search-engine");
 const searchButton = document.getElementById("search-button");
 
-// New Tab toggle button
-const newTabToggle = document.createElement("button");
-newTabToggle.id = "new-tab-toggle";
-newTabToggle.title = "Open results in new tab";
-newTabToggle.innerHTML = "&#128279;"; // 🔗 icon
-newTabToggle.style.cssText = "padding:6px 8px;border-radius:6px;border:none;background:#eee;font-size:16px;cursor:pointer;user-select:none;margin-left:4px;";
-
-// Append toggle next to Go button
-searchButton.parentNode.insertBefore(newTabToggle, searchButton);
-
-// Track toggle state
-let openInNewTab = false;
-newTabToggle.addEventListener("click", () => {
-    openInNewTab = !openInNewTab;
-    newTabToggle.style.background = openInNewTab ? "#8A768C" : "#eee";
-});
-
-// Storage keys
+// Persist last selected engine
 const SEARCH_ENGINE_KEY = "chroma_last_engine";
-const SEARCH_QUERY_KEY = "chroma_last_query";
-
-// Restore saved engine + query
 const savedEngine = localStorage.getItem(SEARCH_ENGINE_KEY);
 if (savedEngine) engineSelect.value = savedEngine;
+engineSelect.addEventListener("change", () => {
+    localStorage.setItem(SEARCH_ENGINE_KEY, engineSelect.value);
+});
 
-const savedQuery = localStorage.getItem(SEARCH_QUERY_KEY);
+// Persist last query
+const QUERY_KEY = "chroma_last_query";
+const savedQuery = localStorage.getItem(QUERY_KEY);
 if (savedQuery) queryInput.value = savedQuery;
 
-// Save engine + query when changed
-engineSelect.addEventListener("change", () => localStorage.setItem(SEARCH_ENGINE_KEY, engineSelect.value));
-queryInput.addEventListener("input", () => localStorage.setItem(SEARCH_QUERY_KEY, queryInput.value));
+// --- New Tab Toggle (JS only) ---
+let openInNewTab = false;
 
-// Perform search (same tab or new tab depending on toggle)
+// Create small toggle button dynamically
+const newTabToggle = document.createElement("button");
+newTabToggle.title = "Open results in new tab";
+newTabToggle.style.cssText = `
+    width:36px; height:36px; padding:0; margin-left:4px; border-radius:6px; border:none; 
+    background:#555; font-size:18px; color:#fff; cursor:pointer;
+`;
+newTabToggle.innerHTML = "&#128279;"; // 🔗 icon
+
+// Insert the toggle after engine select, before Go button
+engineSelect.insertAdjacentElement("afterend", newTabToggle);
+
+// Toggle behavior
+newTabToggle.addEventListener("click", () => {
+    openInNewTab = !openInNewTab;
+    if (openInNewTab) {
+        newTabToggle.style.background = "#FFAA00"; // darker active
+        newTabToggle.innerHTML = "&#128279; New";
+    } else {
+        newTabToggle.style.background = "#555"; // default
+        newTabToggle.innerHTML = "&#128279;";
+    }
+});
+
+// --- Perform Search ---
 function performSearch() {
-    const q = queryInput.value.trim();
+    const q = encodeURIComponent(queryInput.value.trim());
     if (!q) return;
 
-    localStorage.setItem(SEARCH_QUERY_KEY, q);
+    localStorage.setItem(QUERY_KEY, queryInput.value); // save last query
 
-    const target = openInNewTab ? "_blank" : "_self";
-    window.open(engineSelect.value + encodeURIComponent(q), target);
+    const fullUrl = engineSelect.value + q;
+    window.open(fullUrl, openInNewTab ? "_blank" : "_self");
 }
 
-// Bind Go button
+// --- Event Listeners ---
 searchButton.addEventListener("click", performSearch);
-
-// Bind Enter key
 queryInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") performSearch();
 });
