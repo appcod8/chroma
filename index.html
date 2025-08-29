@@ -313,11 +313,29 @@
 
     // Searchbox Input Engines logic
 // query persistence 
+// Existing elements
 const queryInput = document.getElementById("search-query");
 const engineSelect = document.getElementById("search-engine");
 const searchButton = document.getElementById("search-button");
 
-// Keys for storage
+// New Tab toggle button
+const newTabToggle = document.createElement("button");
+newTabToggle.id = "new-tab-toggle";
+newTabToggle.title = "Open results in new tab";
+newTabToggle.innerHTML = "&#128279;"; // 🔗 icon
+newTabToggle.style.cssText = "padding:6px 8px;border-radius:6px;border:none;background:#eee;font-size:16px;cursor:pointer;user-select:none;margin-left:4px;";
+
+// Append toggle next to Go button
+searchButton.parentNode.insertBefore(newTabToggle, searchButton);
+
+// Track toggle state
+let openInNewTab = false;
+newTabToggle.addEventListener("click", () => {
+    openInNewTab = !openInNewTab;
+    newTabToggle.style.background = openInNewTab ? "#FFD600" : "#eee";
+});
+
+// Storage keys
 const SEARCH_ENGINE_KEY = "chroma_last_engine";
 const SEARCH_QUERY_KEY = "chroma_last_query";
 
@@ -328,28 +346,29 @@ if (savedEngine) engineSelect.value = savedEngine;
 const savedQuery = localStorage.getItem(SEARCH_QUERY_KEY);
 if (savedQuery) queryInput.value = savedQuery;
 
-// Save engine on change
-engineSelect.addEventListener("change", () =>
-  localStorage.setItem(SEARCH_ENGINE_KEY, engineSelect.value)
-);
+// Save engine + query when changed
+engineSelect.addEventListener("change", () => localStorage.setItem(SEARCH_ENGINE_KEY, engineSelect.value));
+queryInput.addEventListener("input", () => localStorage.setItem(SEARCH_QUERY_KEY, queryInput.value));
 
-// Save query on input
-queryInput.addEventListener("input", () =>
-  localStorage.setItem(SEARCH_QUERY_KEY, queryInput.value)
-);
-
+// Perform search (same tab or new tab depending on toggle)
 function performSearch() {
-  const q = (queryInput.value || "").trim();
-  if (!q) return;
-  // Save last query before searching
-  localStorage.setItem(SEARCH_QUERY_KEY, q);
-  window.open(engineSelect.value + encodeURIComponent(q), "_self");
+    const q = queryInput.value.trim();
+    if (!q) return;
+
+    localStorage.setItem(SEARCH_QUERY_KEY, q);
+
+    const target = openInNewTab ? "_blank" : "_self";
+    window.open(engineSelect.value + encodeURIComponent(q), target);
 }
 
+// Bind Go button
 searchButton.addEventListener("click", performSearch);
+
+// Bind Enter key
 queryInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") performSearch();
+    if (e.key === "Enter") performSearch();
 });
+
 
     // Bookmarks
     const bookmarks=[{name:"SpaceEdge",url:"https://spaceedge.com"},{name:"Wiki",url:"https://www.wikipedia.org"},{name:"StackOverflow",url:"https://stackoverflow.com"}];
