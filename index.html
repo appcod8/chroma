@@ -310,7 +310,9 @@
     },{threshold:.15});
     document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-// Searchbox engines + query persistence logic
+
+    // Searchbox Input Engines logic
+// query persistence 
 const queryInput = document.getElementById("search-query");
 const engineSelect = document.getElementById("search-engine");
 const searchButton = document.getElementById("search-button");
@@ -331,7 +333,6 @@ engineSelect.addEventListener("change", () =>
   localStorage.setItem(SEARCH_ENGINE_KEY, engineSelect.value)
 );
 
-//Search-box Engines logic
 // Save query on input
 queryInput.addEventListener("input", () =>
   localStorage.setItem(SEARCH_QUERY_KEY, queryInput.value)
@@ -351,7 +352,6 @@ queryInput.addEventListener("keydown", (e) => {
 });
 
     // Bookmarks
-
     const bookmarks=[{name:"SpaceEdge",url:"https://spaceedge.com"},{name:"Wiki",url:"https://www.wikipedia.org"},{name:"StackOverflow",url:"https://stackoverflow.com"}];
     document.querySelectorAll("#bookmark-bar button").forEach((btn,i)=>btn.addEventListener("click",()=>window.open(bookmarks[i].url,"_self")));
 
