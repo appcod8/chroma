@@ -339,9 +339,9 @@ const newTabToggle = document.createElement("button");
 newTabToggle.title = "Open results in new tab";
 newTabToggle.style.cssText = `
     width:36px; height:36px; padding:0; margin-left:4px; border-radius:6px; border:none; 
-    background:#5F5; font-size:18px; color:#fff; cursor:pointer;
+    background:#55f; font-size:18px; color:#fff; cursor:pointer;
 `;
-newTabToggle.innerHTML = "&#f2f2f9;"; // 🔗 only
+newTabToggle.innerHTML = "&#128279;"; // 🔗 only
 newTabToggle.style.width = "26px"; //stays small
 // Insert the toggle after engine select, before Go button
 engineSelect.insertAdjacentElement("afterend", newTabToggle);
@@ -354,7 +354,7 @@ newTabToggle.addEventListener("click", () => {
         newTabToggle.innerHTML =  '&#128279;<span style="display:block;font-size:8px; margin:2px;">New</span>';
     } else {
         newTabToggle.style.background = "#969"; // default
-        newTabToggle.innerHTML = "&#128279;";
+        newTabToggle.innerHTML = "&#a2a2f9;";
     }
 });
 
