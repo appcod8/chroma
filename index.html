@@ -310,25 +310,52 @@
     },{threshold:.15});
     document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-    // Search box logic
-    const queryInput=document.getElementById("search-query");
-    const engineSelect=document.getElementById("search-engine");
-    const searchButton=document.getElementById("search-button");
-    const SEARCH_ENGINE_KEY="chroma_last_engine";
-    const savedEngine=localStorage.getItem(SEARCH_ENGINE_KEY);
-    if(savedEngine) engineSelect.value=savedEngine;
-    engineSelect.addEventListener("change",()=>localStorage.setItem(SEARCH_ENGINE_KEY,engineSelect.value));
-    function performSearch(){
-      const q=encodeURIComponent((queryInput.value||"").trim()); if(!q) return;
-      window.open(engineSelect.value+q,"_self");
-    }
-    searchButton.addEventListener("click",performSearch);
-    queryInput.addEventListener("keydown",(e)=>{if(e.key==="Enter") performSearch();});
+// Searchbox engines + query persistence logic
+const queryInput = document.getElementById("search-query");
+const engineSelect = document.getElementById("search-engine");
+const searchButton = document.getElementById("search-button");
+
+// Keys for storage
+const SEARCH_ENGINE_KEY = "chroma_last_engine";
+const SEARCH_QUERY_KEY = "chroma_last_query";
+
+// Restore saved engine + query
+const savedEngine = localStorage.getItem(SEARCH_ENGINE_KEY);
+if (savedEngine) engineSelect.value = savedEngine;
+
+const savedQuery = localStorage.getItem(SEARCH_QUERY_KEY);
+if (savedQuery) queryInput.value = savedQuery;
+
+// Save engine on change
+engineSelect.addEventListener("change", () =>
+  localStorage.setItem(SEARCH_ENGINE_KEY, engineSelect.value)
+);
+
+//Search-box Engines logic
+// Save query on input
+queryInput.addEventListener("input", () =>
+  localStorage.setItem(SEARCH_QUERY_KEY, queryInput.value)
+);
+
+function performSearch() {
+  const q = (queryInput.value || "").trim();
+  if (!q) return;
+  // Save last query before searching
+  localStorage.setItem(SEARCH_QUERY_KEY, q);
+  window.open(engineSelect.value + encodeURIComponent(q), "_self");
+}
+
+searchButton.addEventListener("click", performSearch);
+queryInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") performSearch();
+});
+
     // Bookmarks
+
     const bookmarks=[{name:"SpaceEdge",url:"https://spaceedge.com"},{name:"Wiki",url:"https://www.wikipedia.org"},{name:"StackOverflow",url:"https://stackoverflow.com"}];
     document.querySelectorAll("#bookmark-bar button").forEach((btn,i)=>btn.addEventListener("click",()=>window.open(bookmarks[i].url,"_self")));
 
-    // Store link placeholder safety (kept in case href is '#')
+// Store link placeholder safety (kept in case href is '#')
     function wirePlaceholder(el){
       el?.addEventListener('click',(e)=>{
         const href=el.getAttribute('href'); if(href==="#"||href===""||href===null){e.preventDefault();alert('The store listing is coming soon.');}
@@ -337,7 +364,7 @@
     wirePlaceholder(document.getElementById('storeLink'));
     wirePlaceholder(document.getElementById('downloadButton'));
 
-    // Incognito tagline slide-up (optional hook if you add it later)
+// Incognito tagline slide-up (optional hook add later)
     function isInViewport(el){const r=el.getBoundingClientRect();return r.top<=innerHeight && r.bottom>=0}
     const incog=document.getElementById("incognito-tagline");
     function checkSlideUp(){ if(!incog) return; if(isInViewport(incog)){incog.style.opacity=1;incog.style.transform="translateY(0)";window.removeEventListener("scroll",checkSlideUp)}}
