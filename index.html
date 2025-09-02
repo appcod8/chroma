@@ -347,19 +347,7 @@ queryList.id = "query-history-list";
 document.body.appendChild(queryList);
 queryInput.setAttribute("list", "query-history-list");
 
-function refreshHistoryDropdown() {
-    queryList.innerHTML = "";
-    queryHistory.slice(-10).reverse().forEach(q => {
-        const option = document.createElement("option");
-        option.value = q;
-        queryList.appendChild(option);
-    });
-    // Show/hide clear button
-    clearBtn.style.display = queryHistory.length ? "inline-block" : "none";
-}
-refreshHistoryDropdown();
-
-// --- Clear History Button (inline next to input) ---
+// --- Add Clear History button (inline, mobile-friendly) ---
 const clearBtn = document.createElement("button");
 clearBtn.textContent = "✕";
 clearBtn.title = "Clear query history";
@@ -376,7 +364,21 @@ clearBtn.addEventListener("click", () => {
     refreshHistoryDropdown();
 });
 
-// --- New Tab Toggle ---
+function refreshHistoryDropdown() {
+    queryList.innerHTML = "";
+    queryHistory.slice(-10).reverse().forEach(q => {
+        const option = document.createElement("option");
+        option.value = q;
+        queryList.appendChild(option);
+    });
+    // Only show clear button if there is history
+    clearBtn.style.display = queryHistory.length ? "inline-block" : "none";
+}
+
+// Initial call
+refreshHistoryDropdown();
+
+// --- New Tab Toggle (unchanged) ---
 let openInNewTab = false;
 const newTabToggle = document.createElement("button");
 newTabToggle.title = "Open results in new tab";
@@ -403,6 +405,7 @@ function performSearch() {
     const q = queryInput.value.trim();
     if (!q) return;
 
+    // update history
     if (!queryHistory.includes(q)) {
         queryHistory.push(q);
         localStorage.setItem(QUERY_HISTORY_KEY, JSON.stringify(queryHistory));
