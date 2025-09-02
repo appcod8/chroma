@@ -322,124 +322,92 @@ padding:8px; border-radius:6px;border:none;font-size:16px;">
     // Searchbox Input Engines logic
 // query persistence 
 // --- Search Elements ---
-// --- Search Elements ---
+// --- Query Persistence with Dropdown ---
+const QUERY_KEY = "chroma_query_history";
 const queryInput = document.getElementById("search-query");
 const engineSelect = document.getElementById("search-engine");
 const searchButton = document.getElementById("search-button");
 
-// Persist last selected engine
-const SEARCH_ENGINE_KEY = "chroma_last_engine";
-const savedEngine = localStorage.getItem(SEARCH_ENGINE_KEY);
-if (savedEngine) engineSelect.value = savedEngine;
-engineSelect.addEventListener("change", () => {
-    localStorage.setItem(SEARCH_ENGINE_KEY, engineSelect.value);
-});
+// Create query dropdown
+const queryDropdown = document.createElement("select");
+queryDropdown.style.cssText = `
+  margin-left: 6px;
+  max-width: 140px;
+`;
+queryInput.insertAdjacentElement("afterend", queryDropdown);
 
-// --- Query History ---
-const QUERY_HISTORY_KEY = "chroma_query_history";
-let queryHistory = JSON.parse(localStorage.getItem(QUERY_HISTORY_KEY) || "[]");
-
-// Build dropdown + clear button
-const historySelect = document.createElement("select");
-historySelect.style.marginLeft = "6px";
-
+// Inline ❌ button (hidden by default)
 const clearBtn = document.createElement("button");
 clearBtn.textContent = "❌";
-clearBtn.title = "Clear history";
+clearBtn.title = "Clear all saved queries";
 clearBtn.style.cssText = `
-    margin-left: 6px; padding: 2px 6px; cursor: pointer;
-    border-radius: 4px; border: none; background: #ccc;
+  margin-left: 4px;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  display: none;
 `;
-clearBtn.style.display = queryHistory.length ? "inline-block" : "none"; // only visible if history exists
+queryDropdown.insertAdjacentElement("afterend", clearBtn);
 
-engineSelect.insertAdjacentElement("afterend", historySelect);
-historySelect.insertAdjacentElement("afterend", clearBtn);
-
-// Populate history dropdown
-function refreshHistoryDropdown() {
-    historySelect.innerHTML = "";
-
-    // Placeholder
-    const placeholder = document.createElement("option");
-    placeholder.textContent = "▼ History";
-    placeholder.disabled = true;
-    placeholder.selected = true;
-    historySelect.appendChild(placeholder);
-
-    queryHistory.forEach(q => {
-        const opt = document.createElement("option");
-        opt.value = q;
-        opt.textContent = q.length > 30 ? q.slice(0, 30) + "…" : q;
-        historySelect.appendChild(opt);
+// Load saved queries
+function loadQueries() {
+  const saved = JSON.parse(localStorage.getItem(QUERY_KEY) || "[]");
+  queryDropdown.innerHTML = "";
+  if (saved.length > 0) {
+    queryDropdown.appendChild(new Option("History ▼", "", true, true));
+    saved.forEach((q) => {
+      queryDropdown.appendChild(new Option(q, q));
     });
-
-    // Show/hide clear button
-    clearBtn.style.display = queryHistory.length ? "inline-block" : "none";
+    clearBtn.style.display = "inline"; // show ❌ only when items exist
+  } else {
+    clearBtn.style.display = "none"; // hide ❌ if no items
+  }
 }
-refreshHistoryDropdown();
+loadQueries();
 
-// Load last query
-if (queryHistory.length) {
-    queryInput.value = queryHistory[queryHistory.length - 1];
+// Save query
+function saveQuery(q) {
+  if (!q) return;
+  let saved = JSON.parse(localStorage.getItem(QUERY_KEY) || "[]");
+  if (!saved.includes(q)) {
+    saved.unshift(q);
+    if (saved.length > 10) saved = saved.slice(0, 10); // limit 10
+    localStorage.setItem(QUERY_KEY, JSON.stringify(saved));
+  }
+  loadQueries();
 }
 
-// History select behavior
-historySelect.addEventListener("change", () => {
-    if (historySelect.value) {
-        queryInput.value = historySelect.value;
-    }
+// Select from dropdown
+queryDropdown.addEventListener("change", () => {
+  if (queryDropdown.value) {
+    queryInput.value = queryDropdown.value;
+  }
 });
 
-// Clear button behavior
+// Clear all queries
 clearBtn.addEventListener("click", () => {
-    queryHistory = [];
-    localStorage.setItem(QUERY_HISTORY_KEY, JSON.stringify(queryHistory));
-    refreshHistoryDropdown();
+  localStorage.removeItem(QUERY_KEY);
+  loadQueries();
 });
 
-// --- New Tab Toggle ---
-let openInNewTab = false;
-const newTabToggle = document.createElement("button");
-newTabToggle.title = "Open results in new tab";
-newTabToggle.style.cssText = `
-    width:26px; height:36px; padding:0; margin-left:4px; border-radius:6px; border:none; 
-    background:#55f; font-size:18px; color:#fff; cursor:pointer;
-`;
-newTabToggle.innerHTML = "&#128279;";
-engineSelect.insertAdjacentElement("afterend", newTabToggle);
-
-newTabToggle.addEventListener("click", () => {
-    openInNewTab = !openInNewTab;
-    if (openInNewTab) {
-        newTabToggle.style.background = "#FFAA00";
-        newTabToggle.innerHTML = '&#128279;<span style="display:block;font-size:8px; margin:2px;">New</span>';
-    } else {
-        newTabToggle.style.background = "#55f";
-        newTabToggle.innerHTML = "&#128279;";
-    }
-});
-
-// --- Perform Search ---
+// Perform search + auto-save query
 function performSearch() {
-    const q = queryInput.value.trim();
-    if (!q) return;
+  const query = queryInput.value.trim();
+  if (!query) return;
+  const engineTemplate = engineSelect.value;
+  const url = engineTemplate.replace("{q}", encodeURIComponent(query));
 
-    // Save to history if new
-    if (!queryHistory.includes(q)) {
-        queryHistory.push(q);
-        if (queryHistory.length > 10) queryHistory.shift(); // keep max 10
-        localStorage.setItem(QUERY_HISTORY_KEY, JSON.stringify(queryHistory));
-        refreshHistoryDropdown();
-    }
-
-    const fullUrl = engineSelect.value + encodeURIComponent(q);
-    window.open(fullUrl, openInNewTab ? "_blank" : "_self");
+  saveQuery(query); // auto-save query
+  window.location.href = url; // open in same tab
 }
 
-// --- Event Listeners ---
+// Hook button + Enter key
 searchButton.addEventListener("click", performSearch);
 queryInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") performSearch();
+  if (e.key === "Enter") {
+    performSearch();
+  }
 });
 
 
