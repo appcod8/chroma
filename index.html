@@ -347,6 +347,16 @@ queryList.id = "query-history-list";
 document.body.appendChild(queryList);
 queryInput.setAttribute("list", "query-history-list");
 
+function refreshHistoryDropdown() {
+    queryList.innerHTML = "";
+    queryHistory.slice(-10).reverse().forEach(q => {
+        const option = document.createElement("option");
+        option.value = q;
+        queryList.appendChild(option);
+    });
+}
+refreshHistoryDropdown();
+
 // --- Add Clear History button ---
 const clearBtn = document.createElement("button");
 clearBtn.textContent = "✕";
@@ -355,7 +365,7 @@ clearBtn.style.cssText = `
     margin-left:4px; padding:4px 6px; border:none; border-radius:6px;
     background:#d33; color:#fff; cursor:pointer;
 `;
-queryInput.insertAdjacentElement("afterend", clearBtn);
+engineSelect.insertAdjacentElement("afterend", clearBtn);
 
 clearBtn.addEventListener("click", () => {
     queryHistory = [];
@@ -363,7 +373,7 @@ clearBtn.addEventListener("click", () => {
     refreshHistoryDropdown();
 });
 
-// --- New Tab Toggle (unchanged) ---
+// --- New Tab Toggle ---
 let openInNewTab = false;
 const newTabToggle = document.createElement("button");
 newTabToggle.title = "Open results in new tab";
@@ -372,7 +382,8 @@ newTabToggle.style.cssText = `
     background:#55f; font-size:18px; color:#fff; cursor:pointer;
 `;
 newTabToggle.innerHTML = "&#128279;";
-// Move after clear button for cleaner layout
+
+// Keep both buttons after engineSelect, new tab toggle after clear
 clearBtn.insertAdjacentElement("afterend", newTabToggle);
 
 newTabToggle.addEventListener("click", () => {
