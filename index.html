@@ -354,24 +354,21 @@ function refreshHistoryDropdown() {
         option.value = q;
         queryList.appendChild(option);
     });
-
     // Show/hide clear button
-    clearBtn.style.display = queryHistory.length ? "inline" : "none";
+    clearBtn.style.display = queryHistory.length ? "inline-block" : "none";
 }
 refreshHistoryDropdown();
 
-// --- Add inline Clear History button ---
-const clearBtn = document.createElement("span");
+// --- Clear History Button (inline next to input) ---
+const clearBtn = document.createElement("button");
 clearBtn.textContent = "✕";
 clearBtn.title = "Clear query history";
 clearBtn.style.cssText = `
-    position:absolute; right:8px; top:50%; transform:translateY(-50%);
-    cursor:pointer; color:#fff; background:#d33; border-radius:50%; 
-    padding:2px 6px; font-size:14px; display:none;
+    margin-left:4px; padding:4px 6px; border:none; border-radius:6px;
+    background:#d33; color:#fff; cursor:pointer; font-size:14px;
+    vertical-align:middle; display:none;
 `;
-queryInput.style.position = "relative";
-queryInput.parentElement.style.position = "relative";
-queryInput.parentElement.appendChild(clearBtn);
+queryInput.insertAdjacentElement("afterend", clearBtn);
 
 clearBtn.addEventListener("click", () => {
     queryHistory = [];
@@ -406,7 +403,6 @@ function performSearch() {
     const q = queryInput.value.trim();
     if (!q) return;
 
-    // update history
     if (!queryHistory.includes(q)) {
         queryHistory.push(q);
         localStorage.setItem(QUERY_HISTORY_KEY, JSON.stringify(queryHistory));
