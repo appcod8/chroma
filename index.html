@@ -358,7 +358,6 @@ function refreshHistoryDropdown() {
     // Show/hide Clear button based on history
     clearBtn.style.display = queryHistory.length ? "inline-block" : "none";
 }
-refreshHistoryDropdown();
 
 // --- Add Clear History button ---
 const clearBtn = document.createElement("button");
@@ -368,15 +367,13 @@ clearBtn.style.cssText = `
     margin-left:4px; padding:4px 6px; border:none; border-radius:6px;
     background:#d33; color:#fff; cursor:pointer;
 `;
+// Insert **after the input** (before engine select)
 queryInput.insertAdjacentElement("afterend", clearBtn);
 clearBtn.addEventListener("click", () => {
     queryHistory = [];
     localStorage.removeItem(QUERY_HISTORY_KEY);
     refreshHistoryDropdown();
 });
-
-// Initially hide if no history
-clearBtn.style.display = queryHistory.length ? "inline-block" : "none";
 
 // --- New Tab Toggle (unchanged) ---
 let openInNewTab = false;
@@ -387,6 +384,7 @@ newTabToggle.style.cssText = `
     background:#55f; font-size:18px; color:#fff; cursor:pointer;
 `;
 newTabToggle.innerHTML = "&#128279;";
+// Insert **after the engine select** (not after input)
 engineSelect.insertAdjacentElement("afterend", newTabToggle);
 
 newTabToggle.addEventListener("click", () => {
@@ -399,6 +397,31 @@ newTabToggle.addEventListener("click", () => {
         newTabToggle.innerHTML = "&#128279;";
     }
 });
+
+// --- Perform Search ---
+function performSearch() {
+    const q = queryInput.value.trim();
+    if (!q) return;
+
+    // update history
+    if (!queryHistory.includes(q)) {
+        queryHistory.push(q);
+        localStorage.setItem(QUERY_HISTORY_KEY, JSON.stringify(queryHistory));
+    }
+    refreshHistoryDropdown();
+
+    const fullUrl = engineSelect.value + encodeURIComponent(q);
+    window.open(fullUrl, openInNewTab ? "_blank" : "_self");
+}
+
+// --- Event Listeners ---
+searchButton.addEventListener("click", performSearch);
+queryInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") performSearch();
+});
+
+// Initial refresh after all buttons inserted
+refreshHistoryDropdown();
 
 // --- Perform Search ---
 function performSearch() {
