@@ -322,58 +322,92 @@ padding:8px; border-radius:6px;border:none;font-size:16px;">
     // Searchbox Input Engines logic
 // query persistence 
 // --- Search Elements ---
+// --- Keys ---
+const SEARCH_ENGINE_KEY = "chroma_last_engine";
+const QUERY_HISTORY_KEY = "chroma_query_history";
+
+// --- Elements ---
 const queryInput = document.getElementById("search-query");
 const engineSelect = document.getElementById("search-engine");
 const searchButton = document.getElementById("search-button");
 
-// Persist last selected engine
-const SEARCH_ENGINE_KEY = "chroma_last_engine";
+// --- Restore last engine ---
 const savedEngine = localStorage.getItem(SEARCH_ENGINE_KEY);
 if (savedEngine) engineSelect.value = savedEngine;
 engineSelect.addEventListener("change", () => {
     localStorage.setItem(SEARCH_ENGINE_KEY, engineSelect.value);
 });
 
-// Persist last query
-const QUERY_KEY = "chroma_last_query";
-const savedQuery = localStorage.getItem(QUERY_KEY);
-if (savedQuery) queryInput.value = savedQuery;
+// --- Setup query history ---
+let queryHistory = JSON.parse(localStorage.getItem(QUERY_HISTORY_KEY) || "[]");
 
-// --- New Tab Toggle (JS only) ---
+// Create datalist for suggestions
+const queryList = document.createElement("datalist");
+queryList.id = "query-history-list";
+document.body.appendChild(queryList);
+queryInput.setAttribute("list", "query-history-list");
+
+function refreshHistoryDropdown() {
+    queryList.innerHTML = "";
+    queryHistory.slice(-10).reverse().forEach(q => {
+        const option = document.createElement("option");
+        option.value = q;
+        queryList.appendChild(option);
+    });
+}
+refreshHistoryDropdown();
+
+// --- Add Clear History button ---
+const clearBtn = document.createElement("button");
+clearBtn.textContent = "✕";
+clearBtn.title = "Clear query history";
+clearBtn.style.cssText = `
+    margin-left:4px; padding:4px 6px; border:none; border-radius:6px;
+    background:#d33; color:#fff; cursor:pointer;
+`;
+queryInput.insertAdjacentElement("afterend", clearBtn);
+
+clearBtn.addEventListener("click", () => {
+    queryHistory = [];
+    localStorage.removeItem(QUERY_HISTORY_KEY);
+    refreshHistoryDropdown();
+});
+
+// --- New Tab Toggle (unchanged) ---
 let openInNewTab = false;
-
-// Create small toggle button dynamically
 const newTabToggle = document.createElement("button");
 newTabToggle.title = "Open results in new tab";
 newTabToggle.style.cssText = `
-    width:36px; height:36px; padding:0; margin-left:4px; border-radius:6px; border:none; 
+    width:26px; height:36px; padding:0; margin-left:4px; border-radius:6px; border:none; 
     background:#55f; font-size:18px; color:#fff; cursor:pointer;
 `;
-newTabToggle.innerHTML = "&#128279;"; // 🔗 only
-newTabToggle.style.width = "26px"; //stays small
-// Insert the toggle after engine select, before Go button
+newTabToggle.innerHTML = "&#128279;";
 engineSelect.insertAdjacentElement("afterend", newTabToggle);
 
-// Toggle behavior
 newTabToggle.addEventListener("click", () => {
     openInNewTab = !openInNewTab;
     if (openInNewTab) {
-        newTabToggle.style.background = "#FFAA00"; // darker active
-        newTabToggle.innerHTML =  '&#128279;<span style="display:block;font-size:8px; margin:2px;">New</span>';
+        newTabToggle.style.background = "#FFAA00";
+        newTabToggle.innerHTML = '&#128279;<span style="display:block;font-size:8px; margin:2px;">New</span>';
     } else {
-        newTabToggle.style.background = "#55f"; // default
+        newTabToggle.style.background = "#55f";
         newTabToggle.innerHTML = "&#128279;";
     }
 });
 
 // --- Perform Search ---
 function performSearch() {
-    const q = encodeURIComponent(queryInput.value.trim());
+    const q = queryInput.value.trim();
     if (!q) return;
 
-    localStorage.setItem(QUERY_KEY, queryInput.value); // save last query
+    // update history
+    if (!queryHistory.includes(q)) {
+        queryHistory.push(q);
+        localStorage.setItem(QUERY_HISTORY_KEY, JSON.stringify(queryHistory));
+    }
+    refreshHistoryDropdown();
 
-    const fullUrl = engineSelect.value + q;
+    const fullUrl = engineSelect.value + encodeURIComponent(q);
     window.open(fullUrl, openInNewTab ? "_blank" : "_self");
 }
 
