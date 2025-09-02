@@ -322,73 +322,99 @@ padding:8px; border-radius:6px;border:none;font-size:16px;">
     // Searchbox Input Engines logic
 // query persistence 
 // --- Search Elements --- 
-// --- Query Persistence with Dropdown ---
-const QUERY_KEY = "chroma_query_history";
+// --- Keys ---
+const SEARCH_ENGINE_KEY = "chroma_last_engine";
+const QUERY_HISTORY_KEY = "chroma_query_history";
+
+// --- Elements ---
 const queryInput = document.getElementById("search-query");
 const engineSelect = document.getElementById("search-engine");
 const searchButton = document.getElementById("search-button");
 
-// Create query dropdown
-const queryDropdown = document.createElement("select");
-queryDropdown.style.cssText = `
-  margin-left: 6px;
-  max-width: 140px;
-`;
-queryInput.insertAdjacentElement("afterend", queryDropdown);
-
-// Inline ❌ button (hidden by default)
-const clearBtn = document.createElement("button");
-clearBtn.textContent = "❌";
-clearBtn.title = "Clear all saved queries";
-clearBtn.style.cssText = `
-  margin-left: 4px;
-  background: transparent;
-  border: none;
-  font-size: 14px;
-  cursor: pointer;
-  display: none;
-`;
-queryDropdown.insertAdjacentElement("afterend", clearBtn);
-
-// Load saved queries
-function loadQueries() {
-  const saved = JSON.parse(localStorage.getItem(QUERY_KEY) || "[]");
-  queryDropdown.innerHTML = "";
-  if (saved.length > 0) {
-    queryDropdown.appendChild(new Option("History ▼", "", true, true));
-    saved.forEach((q) => {
-      queryDropdown.appendChild(new Option(q, q));
-    });
-    clearBtn.style.display = "inline"; // show ❌ only when items exist
-  } else {
-    clearBtn.style.display = "none"; // hide ❌ if no items
-  }
-}
-loadQueries();
-
-// Save query
-function saveQuery(q) {
-  if (!q) return;
-  let saved = JSON.parse(localStorage.getItem(QUERY_KEY) || "[]");
-  if (!saved.includes(q)) {
-    saved.unshift(q);
-    if (saved.length > 10) saved = saved.slice(0, 10); // limit 10
-    localStorage.setItem(QUERY_KEY, JSON.stringify(saved));
-  }
-  loadQueries();
-}
-
-// Select from dropdown
-queryDropdown.addEventListener("change", () => {
-  if (queryDropdown.value) {
-    queryInput.value = queryDropdown.value;
-  }
+// --- Restore last engine ---
+const savedEngine = localStorage.getItem(SEARCH_ENGINE_KEY);
+if (savedEngine) engineSelect.value = savedEngine;
+engineSelect.addEventListener("change", () => {
+    localStorage.setItem(SEARCH_ENGINE_KEY, engineSelect.value);
 });
 
-// Clear all queries
+// --- Setup query history ---
+let queryHistory = JSON.parse(localStorage.getItem(QUERY_HISTORY_KEY) || "[]");
+
+// Create datalist for suggestions
+const queryList = document.createElement("datalist");
+queryList.id = "query-history-list";
+document.body.appendChild(queryList);
+queryInput.setAttribute("list", "query-history-list");
+
+function refreshHistoryDropdown() {
+    queryList.innerHTML = "";
+    queryHistory.slice(-10).reverse().forEach(q => {
+        const option = document.createElement("option");
+        option.value = q;
+        queryList.appendChild(option);
+    });
+}
+refreshHistoryDropdown();
+
+// --- Add Clear History button ---
+const clearBtn = document.createElement("button");
+clearBtn.textContent = "✕";
+clearBtn.title = "Clear query history";
+clearBtn.style.cssText = `
+    margin-left:4px; padding:4px 6px; border:none; border-radius:6px;
+    background:#d33; color:#fff; cursor:pointer;
+`;
+queryInput.insertAdjacentElement("afterend", clearBtn);
+
 clearBtn.addEventListener("click", () => {
-  localStorage.removeItem(QUERY_KEY);
-  loadQueries();
+    queryHistory = [];
+    localStorage.removeItem(QUERY_HISTORY_KEY);
+    refreshHistoryDropdown();
+});
+
+// --- New Tab Toggle ---
+let openInNewTab = false;
+const newTabToggle = document.createElement("button");
+newTabToggle.title = "Open results in new tab";
+newTabToggle.style.cssText = `
+    width:26px; height:36px; padding:0; margin-left:4px; border-radius:6px; border:none; 
+    background:#55f; font-size:18px; color:#fff; cursor:pointer;
+`;
+newTabToggle.innerHTML = "&#128279;";
+engineSelect.insertAdjacentElement("afterend", newTabToggle);
+
+newTabToggle.addEventListener("click", () => {
+    openInNewTab = !openInNewTab;
+    if (openInNewTab) {
+        newTabToggle.style.background = "#FFAA00";
+        newTabToggle.innerHTML = '&#128279;<span style="display:block;font-size:8px; margin:2px;">New</span>';
+    } else {
+        newTabToggle.style.background = "#55f";
+        newTabToggle.innerHTML = "&#128279;";
+    }
+});
+
+// --- Perform Search ---
+function performSearch() {
+    const q = queryInput.value.trim();
+    if (!q) return;
+
+    // update history
+    if (!queryHistory.includes(q)) {
+        queryHistory.push(q);
+        localStorage.setItem(QUERY_HISTORY_KEY, JSON.stringify(queryHistory));
+    }
+    refreshHistoryDropdown();
+
+    const fullUrl = engineSelect.value + encodeURIComponent(q);
+    window.open(fullUrl, openInNewTab ? "_blank" : "_self");
+}
+
+// --- Event Listeners ---
+searchButton.addEventListener("click", performSearch);
+queryInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") performSearch();
 });
 
 
