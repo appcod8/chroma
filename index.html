@@ -347,14 +347,13 @@ queryList.id = "query-history-list";
 document.body.appendChild(queryList);
 queryInput.setAttribute("list", "query-history-list");
 
-// --- Add Clear History button (inline, mobile-friendly) ---
+// --- Add Clear History button ---
 const clearBtn = document.createElement("button");
 clearBtn.textContent = "✕";
 clearBtn.title = "Clear query history";
 clearBtn.style.cssText = `
     margin-left:4px; padding:4px 6px; border:none; border-radius:6px;
-    background:#d33; color:#fff; cursor:pointer; font-size:14px;
-    vertical-align:middle; display:none;
+    background:#d33; color:#fff; cursor:pointer;
 `;
 queryInput.insertAdjacentElement("afterend", clearBtn);
 
@@ -363,20 +362,6 @@ clearBtn.addEventListener("click", () => {
     localStorage.removeItem(QUERY_HISTORY_KEY);
     refreshHistoryDropdown();
 });
-
-function refreshHistoryDropdown() {
-    queryList.innerHTML = "";
-    queryHistory.slice(-10).reverse().forEach(q => {
-        const option = document.createElement("option");
-        option.value = q;
-        queryList.appendChild(option);
-    });
-    // Only show clear button if there is history
-    clearBtn.style.display = queryHistory.length ? "inline-block" : "none";
-}
-
-// Initial call
-refreshHistoryDropdown();
 
 // --- New Tab Toggle (unchanged) ---
 let openInNewTab = false;
@@ -387,7 +372,8 @@ newTabToggle.style.cssText = `
     background:#55f; font-size:18px; color:#fff; cursor:pointer;
 `;
 newTabToggle.innerHTML = "&#128279;";
-engineSelect.insertAdjacentElement("afterend", newTabToggle);
+// Move after clear button for cleaner layout
+clearBtn.insertAdjacentElement("afterend", newTabToggle);
 
 newTabToggle.addEventListener("click", () => {
     openInNewTab = !openInNewTab;
