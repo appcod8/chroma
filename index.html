@@ -321,8 +321,8 @@ padding:8px; border-radius:6px;border:none;font-size:16px;">
 
     // Searchbox Input Engines logic
 // query persistence 
-// --- Search Elements ---
-// --- Query Persistence with Dropdown ---// 
+// --- Search Elements --- 
+// --- Query Persistence with Dropdown ---
 const QUERY_KEY = "chroma_query_history";
 const queryInput = document.getElementById("search-query");
 const engineSelect = document.getElementById("search-engine");
@@ -389,25 +389,6 @@ queryDropdown.addEventListener("change", () => {
 clearBtn.addEventListener("click", () => {
   localStorage.removeItem(QUERY_KEY);
   loadQueries();
-});
-
-// Perform search + auto-save query
-function performSearch() {
-  const query = queryInput.value.trim();
-  if (!query) return;
-  const engineTemplate = engineSelect.value;
-  const url = engineTemplate.replace("{q}", encodeURIComponent(query));
-
-  saveQuery(query); // auto-save query
-  window.location.href = url; // open in same tab
-}
-
-// Hook button + Enter key
-searchButton.addEventListener("click", performSearch);
-queryInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    performSearch();
-  }
 });
 
 
