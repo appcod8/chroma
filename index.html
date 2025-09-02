@@ -354,6 +354,9 @@ function refreshHistoryDropdown() {
         option.value = q;
         queryList.appendChild(option);
     });
+
+    // Show/hide Clear button based on history
+    clearBtn.style.display = queryHistory.length ? "inline-block" : "none";
 }
 refreshHistoryDropdown();
 
@@ -366,12 +369,14 @@ clearBtn.style.cssText = `
     background:#d33; color:#fff; cursor:pointer;
 `;
 queryInput.insertAdjacentElement("afterend", clearBtn);
-
 clearBtn.addEventListener("click", () => {
     queryHistory = [];
     localStorage.removeItem(QUERY_HISTORY_KEY);
     refreshHistoryDropdown();
 });
+
+// Initially hide if no history
+clearBtn.style.display = queryHistory.length ? "inline-block" : "none";
 
 // --- New Tab Toggle (unchanged) ---
 let openInNewTab = false;
