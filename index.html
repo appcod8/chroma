@@ -322,58 +322,82 @@ padding:8px; border-radius:6px;border:none;font-size:16px;">
     // Searchbox Input Engines logic
 // query persistence 
 // --- Search Elements ---
-// --- Keys ---
-const SEARCH_ENGINE_KEY = "chroma_last_engine";
-const QUERY_HISTORY_KEY = "chroma_query_history";
-
-// --- Elements ---
+// --- Search Elements ---
 const queryInput = document.getElementById("search-query");
 const engineSelect = document.getElementById("search-engine");
 const searchButton = document.getElementById("search-button");
 
-// --- Restore last engine ---
+// Persist last selected engine
+const SEARCH_ENGINE_KEY = "chroma_last_engine";
 const savedEngine = localStorage.getItem(SEARCH_ENGINE_KEY);
 if (savedEngine) engineSelect.value = savedEngine;
 engineSelect.addEventListener("change", () => {
     localStorage.setItem(SEARCH_ENGINE_KEY, engineSelect.value);
 });
 
-// --- Setup query history ---
+// --- Query History ---
+const QUERY_HISTORY_KEY = "chroma_query_history";
 let queryHistory = JSON.parse(localStorage.getItem(QUERY_HISTORY_KEY) || "[]");
 
-// Create datalist for suggestions
-const queryList = document.createElement("datalist");
-queryList.id = "query-history-list";
-document.body.appendChild(queryList);
-queryInput.setAttribute("list", "query-history-list");
+// Build dropdown + clear button
+const historySelect = document.createElement("select");
+historySelect.style.marginLeft = "6px";
 
+const clearBtn = document.createElement("button");
+clearBtn.textContent = "❌";
+clearBtn.title = "Clear history";
+clearBtn.style.cssText = `
+    margin-left: 6px; padding: 2px 6px; cursor: pointer;
+    border-radius: 4px; border: none; background: #ccc;
+`;
+clearBtn.style.display = queryHistory.length ? "inline-block" : "none"; // only visible if history exists
+
+engineSelect.insertAdjacentElement("afterend", historySelect);
+historySelect.insertAdjacentElement("afterend", clearBtn);
+
+// Populate history dropdown
 function refreshHistoryDropdown() {
-    queryList.innerHTML = "";
-    queryHistory.slice(-10).reverse().forEach(q => {
-        const option = document.createElement("option");
-        option.value = q;
-        queryList.appendChild(option);
+    historySelect.innerHTML = "";
+
+    // Placeholder
+    const placeholder = document.createElement("option");
+    placeholder.textContent = "▼ History";
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    historySelect.appendChild(placeholder);
+
+    queryHistory.forEach(q => {
+        const opt = document.createElement("option");
+        opt.value = q;
+        opt.textContent = q.length > 30 ? q.slice(0, 30) + "…" : q;
+        historySelect.appendChild(opt);
     });
+
+    // Show/hide clear button
+    clearBtn.style.display = queryHistory.length ? "inline-block" : "none";
 }
 refreshHistoryDropdown();
 
-// --- Add Clear History button ---
-const clearBtn = document.createElement("button");
-clearBtn.textContent = "✕";
-clearBtn.title = "Clear query history";
-clearBtn.style.cssText = `
-    margin-left:4px; padding:4px 6px; border:none; border-radius:6px;
-    background:#d33; color:#fff; cursor:pointer;
-`;
-queryInput.insertAdjacentElement("afterend", clearBtn);
+// Load last query
+if (queryHistory.length) {
+    queryInput.value = queryHistory[queryHistory.length - 1];
+}
 
+// History select behavior
+historySelect.addEventListener("change", () => {
+    if (historySelect.value) {
+        queryInput.value = historySelect.value;
+    }
+});
+
+// Clear button behavior
 clearBtn.addEventListener("click", () => {
     queryHistory = [];
-    localStorage.removeItem(QUERY_HISTORY_KEY);
+    localStorage.setItem(QUERY_HISTORY_KEY, JSON.stringify(queryHistory));
     refreshHistoryDropdown();
 });
 
-// --- New Tab Toggle (unchanged) ---
+// --- New Tab Toggle ---
 let openInNewTab = false;
 const newTabToggle = document.createElement("button");
 newTabToggle.title = "Open results in new tab";
@@ -400,12 +424,13 @@ function performSearch() {
     const q = queryInput.value.trim();
     if (!q) return;
 
-    // update history
+    // Save to history if new
     if (!queryHistory.includes(q)) {
         queryHistory.push(q);
+        if (queryHistory.length > 10) queryHistory.shift(); // keep max 10
         localStorage.setItem(QUERY_HISTORY_KEY, JSON.stringify(queryHistory));
+        refreshHistoryDropdown();
     }
-    refreshHistoryDropdown();
 
     const fullUrl = engineSelect.value + encodeURIComponent(q);
     window.open(fullUrl, openInNewTab ? "_blank" : "_self");
