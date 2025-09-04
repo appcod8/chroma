@@ -352,27 +352,35 @@ engineSelect.addEventListener("change", () => {
 
 
 // --- Setup query history ---
+// --- Setup query history ---
 let queryHistory = JSON.parse(localStorage.getItem(QUERY_HISTORY_KEY) || "[]");
 
 // --- Create custom dropdown ---
 const dropdown = document.createElement("ul");
+
+// Make parent relative so dropdown aligns properly
+queryInput.parentNode.style.position = "relative";
+
 dropdown.style.cssText = `
     position:absolute;
     top:100%; left:0;
-    width:calc(100% - 2px); 
+    width:100%; /* match input width */
+    box-sizing:border-box;
     margin:0; padding:0;
     list-style:none;
     border:1px solid #ccc;
-    background:#fff; 
+    border-radius:4px;
+    background:#fff;
     max-height:200px;
     overflow-y:auto;
     display:none;
     z-index:1000;
-    font-size:14px;
+    font-size:16px;
+    line-height:1.4;
     color:#000;
     box-shadow:0 2px 6px rgba(0,0,0,0.15);
 `;
-queryInput.parentNode.style.position = "relative"; // ensure parent is positioned
+
 queryInput.parentNode.appendChild(dropdown);
 
 // --- Refresh dropdown ---
@@ -382,14 +390,15 @@ function refreshHistoryDropdown() {
     queryHistory.slice(-10).reverse().forEach((q, index) => {
         const li = document.createElement("li");
         li.style.cssText = `
-            padding:6px 10px;
+            padding:8px 12px;
             display:flex;
             justify-content:space-between;
             align-items:center;
             cursor:pointer;
-            font-size:14px;
+            font-size:16px;
             color:#000;
             background:#fff;
+            min-height:30px;
         `;
 
         const textSpan = document.createElement("span");
@@ -401,7 +410,7 @@ function refreshHistoryDropdown() {
         deleteBtn.style.cssText = `
             background:none; border:none; color:#d33;
             font-weight:bold; cursor:pointer; padding:0 6px;
-            font-size:14px;
+            font-size:16px;
         `;
         deleteBtn.addEventListener("mousedown", (e) => {
             e.stopPropagation(); // prevent filling input
@@ -413,6 +422,7 @@ function refreshHistoryDropdown() {
         li.appendChild(textSpan);
         li.appendChild(deleteBtn);
 
+        // Clicking text fills input
         li.addEventListener("mousedown", () => {
             queryInput.value = q;
             dropdown.style.display = "none";
@@ -432,6 +442,7 @@ queryInput.addEventListener("focus", () => {
 
 // --- Hide dropdown on blur safely ---
 queryInput.addEventListener("blur", () => {
+    // timeout allows clicking li or deleteBtn
     setTimeout(() => dropdown.style.display = "none", 150);
 
     const val = queryInput.value.trim();
