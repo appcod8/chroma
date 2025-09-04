@@ -361,12 +361,21 @@ document.body.appendChild(queryList);
 queryInput.setAttribute("list", "query-history-list");
 
 function refreshHistoryDropdown() {
+    // Save focus state
+    const isFocused = document.activeElement === queryInput;
+
     queryList.innerHTML = "";
     queryHistory.slice(-10).reverse().forEach(q => {
         const option = document.createElement("option");
         option.value = q;
         queryList.appendChild(option);
     });
+
+    // iOS-safe: briefly blur and refocus if input is focused
+    if (isFocused) {
+        queryInput.blur();
+        setTimeout(() => queryInput.focus(), 10);
+    }
 }
 refreshHistoryDropdown();
 
@@ -383,6 +392,8 @@ engineSelect.insertAdjacentElement("afterend", clearBtn);
 clearBtn.addEventListener("click", () => {
     queryHistory = [];
     localStorage.removeItem(QUERY_HISTORY_KEY);
+
+    // Refresh dropdown safely
     refreshHistoryDropdown();
 });
 
