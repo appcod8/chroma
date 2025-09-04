@@ -352,6 +352,7 @@ engineSelect.addEventListener("change", () => {
 
 
 // --- Setup query history ---
+// --- Setup query history ---
 let queryHistory = JSON.parse(localStorage.getItem(QUERY_HISTORY_KEY) || "[]");
 
 // --- Create custom dropdown ---
@@ -368,21 +369,49 @@ dropdown.style.cssText = `
     display:none;
     z-index:1000;
 `;
-
-// Append dropdown next to input
 queryInput.parentNode.appendChild(dropdown);
 
-// --- Refresh dropdown with last 10 history items ---
+// --- Refresh dropdown ---
 function refreshHistoryDropdown() {
     dropdown.innerHTML = "";
-    queryHistory.slice(-10).reverse().forEach(q => {
+
+    queryHistory.slice(-10).reverse().forEach((q, index) => {
         const li = document.createElement("li");
-        li.textContent = q;
-        li.style.cssText = "padding:4px 8px; cursor:pointer;";
+        li.style.cssText = `
+            padding:4px 8px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            cursor:pointer;
+        `;
+
+        const textSpan = document.createElement("span");
+        textSpan.textContent = q;
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "×";
+        deleteBtn.title = "Delete this entry";
+        deleteBtn.style.cssText = `
+            background:none; border:none; color:#d33;
+            font-weight:bold; cursor:pointer; padding:0 4px;
+        `;
+        deleteBtn.addEventListener("mousedown", (e) => {
+            e.stopPropagation(); // prevent filling input
+            // Remove correct item
+            queryHistory.splice(queryHistory.length - 1 - index, 1);
+            localStorage.setItem(QUERY_HISTORY_KEY, JSON.stringify(queryHistory));
+            refreshHistoryDropdown();
+        });
+
+        li.appendChild(textSpan);
+        li.appendChild(deleteBtn);
+
+        // Clicking text fills input
         li.addEventListener("mousedown", () => {
-            queryInput.value = q;        // fill input safely
+            queryInput.value = q;
             dropdown.style.display = "none";
         });
+
         dropdown.appendChild(li);
     });
 }
@@ -395,7 +424,7 @@ queryInput.addEventListener("focus", () => {
     }
 });
 
-// --- Hide dropdown on blur and save history ---
+// --- Hide dropdown on blur and save new entry ---
 queryInput.addEventListener("blur", () => {
     setTimeout(() => dropdown.style.display = "none", 100);
     const val = queryInput.value.trim();
@@ -411,8 +440,8 @@ const clearBtn = document.createElement("button");
 clearBtn.textContent = "✕";
 clearBtn.title = "Clear query history";
 clearBtn.style.cssText = `
-    margin-left:4px; padding:4px 6px; border:none; border-radius:6px;
-    background:#d33; color:#fff; cursor:pointer;
+    margin-left:4px; padding:4px 6px; border:none;
+    border-radius:6px; background:#d33; color:#fff; cursor:pointer;
 `;
 engineSelect.insertAdjacentElement("afterend", clearBtn);
 
