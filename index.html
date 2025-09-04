@@ -352,6 +352,7 @@ engineSelect.addEventListener("change", () => {
 
 
 // --- Setup query history ---
+// --- Setup query history ---
 let queryHistory = JSON.parse(localStorage.getItem(QUERY_HISTORY_KEY) || "[]");
 
 // --- Wrap input for optional arrow ---
@@ -473,7 +474,12 @@ queryInput.addEventListener("input", () => refreshHistoryDropdown(queryInput.val
 
 // --- Hide dropdown on blur safely ---
 queryInput.addEventListener("blur", () => {
-    setTimeout(() => dropdown.style.display = "none", 150);
+    setTimeout(() => {
+        const active = document.activeElement;
+        if (!dropdown.contains(active)) {
+            dropdown.style.display = "none";
+        }
+    }, 100);
 
     const val = queryInput.value.trim();
     if (val && !queryHistory.includes(val)) {
