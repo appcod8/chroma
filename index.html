@@ -352,13 +352,15 @@ engineSelect.addEventListener("change", () => {
 
 
 // --- Setup query history ---
+// --- Setup query history ---
 let queryHistory = JSON.parse(localStorage.getItem(QUERY_HISTORY_KEY) || "[]");
 
 // --- Create custom dropdown ---
 const dropdown = document.createElement("ul");
 dropdown.style.cssText = `
     position:absolute;
-    top:100%; left:0; right:0;
+    top:100%; left:0;
+    width:100%;
     margin:0; padding:0;
     list-style:none;
     border:1px solid #ccc;
@@ -368,6 +370,7 @@ dropdown.style.cssText = `
     display:none;
     z-index:1000;
 `;
+queryInput.parentNode.style.position = "relative"; // ensure parent is positioned
 queryInput.parentNode.appendChild(dropdown);
 
 // --- Refresh dropdown ---
@@ -396,7 +399,6 @@ function refreshHistoryDropdown() {
         `;
         deleteBtn.addEventListener("mousedown", (e) => {
             e.stopPropagation(); // prevent filling input
-            // Remove correct item
             queryHistory.splice(queryHistory.length - 1 - index, 1);
             localStorage.setItem(QUERY_HISTORY_KEY, JSON.stringify(queryHistory));
             refreshHistoryDropdown();
@@ -405,7 +407,6 @@ function refreshHistoryDropdown() {
         li.appendChild(textSpan);
         li.appendChild(deleteBtn);
 
-        // Clicking text fills input
         li.addEventListener("mousedown", () => {
             queryInput.value = q;
             dropdown.style.display = "none";
@@ -423,9 +424,11 @@ queryInput.addEventListener("focus", () => {
     }
 });
 
-// --- Hide dropdown on blur and save new entry ---
+// --- Hide dropdown on blur safely ---
 queryInput.addEventListener("blur", () => {
-    setTimeout(() => dropdown.style.display = "none", 100);
+    // small timeout to allow click on deleteBtn or li
+    setTimeout(() => dropdown.style.display = "none", 150);
+
     const val = queryInput.value.trim();
     if (val && !queryHistory.includes(val)) {
         queryHistory.push(val);
