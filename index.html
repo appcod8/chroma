@@ -352,18 +352,36 @@ engineSelect.addEventListener("change", () => {
 
 
 // --- Setup query history ---
+// --- Setup query history ---
 let queryHistory = JSON.parse(localStorage.getItem(QUERY_HISTORY_KEY) || "[]");
+
+// --- Wrap input for optional arrow ---
+const wrapper = document.createElement("div");
+wrapper.style.position = "relative";
+queryInput.parentNode.insertBefore(wrapper, queryInput);
+wrapper.appendChild(queryInput);
+
+// Optional dropdown arrow
+const arrow = document.createElement("span");
+arrow.textContent = "▼";
+arrow.style.cssText = `
+    position:absolute;
+    right:6px;
+    top:50%;
+    transform:translateY(-50%);
+    pointer-events:none;
+    color:#555;
+    font-size:12px;
+`;
+wrapper.appendChild(arrow);
 
 // --- Create custom dropdown ---
 const dropdown = document.createElement("ul");
+wrapper.appendChild(dropdown);
 
-// Ensure input container is positioned
-queryInput.parentNode.style.position = "relative";
-
-// Function to set dropdown position & width based on input
+// --- Function to update dropdown position/width ---
 function updateDropdownPosition() {
-    const rect = queryInput.getBoundingClientRect();
-    dropdown.style.top = queryInput.offsetHeight + 2 + "px"; // just below input
+    dropdown.style.top = queryInput.offsetHeight + 2 + "px";
     dropdown.style.left = "0px";
     dropdown.style.width = queryInput.offsetWidth + "px";
 }
@@ -387,13 +405,21 @@ dropdown.style.cssText += `
     box-shadow:0 2px 6px rgba(0,0,0,0.15);
 `;
 
-queryInput.parentNode.appendChild(dropdown);
-
-// --- Refresh dropdown ---
-function refreshHistoryDropdown() {
+// --- Refresh dropdown with optional filter ---
+function refreshHistoryDropdown(filter="") {
     dropdown.innerHTML = "";
 
-    queryHistory.slice(-10).reverse().forEach((q, index) => {
+    const matches = queryHistory
+        .slice(-10)
+        .reverse()
+        .filter(q => q.toLowerCase().includes(filter.toLowerCase()));
+
+    if (matches.length === 0) {
+        dropdown.style.display = "none";
+        return;
+    }
+
+    matches.forEach((q, index) => {
         const li = document.createElement("li");
         li.style.cssText = `
             padding:8px 12px;
@@ -418,11 +444,13 @@ function refreshHistoryDropdown() {
             font-weight:bold; cursor:pointer; padding:0 6px;
             font-size:16px;
         `;
+
         deleteBtn.addEventListener("mousedown", (e) => {
-            e.stopPropagation(); // prevent filling input
-            queryHistory.splice(queryHistory.length - 1 - index, 1);
+            e.stopPropagation();
+            const originalIndex = queryHistory.length - 1 - queryHistory.slice(-10).reverse().indexOf(q);
+            queryHistory.splice(originalIndex, 1);
             localStorage.setItem(QUERY_HISTORY_KEY, JSON.stringify(queryHistory));
-            refreshHistoryDropdown();
+            refreshHistoryDropdown(queryInput.value);
         });
 
         li.appendChild(textSpan);
@@ -436,16 +464,13 @@ function refreshHistoryDropdown() {
         dropdown.appendChild(li);
     });
 
-    updateDropdownPosition(); // ensure position remains correct
+    dropdown.style.display = "block";
+    updateDropdownPosition();
 }
 
-// --- Show dropdown on focus ---
-queryInput.addEventListener("focus", () => {
-    if (queryHistory.length > 0) {
-        refreshHistoryDropdown();
-        dropdown.style.display = "block";
-    }
-});
+// --- Show dropdown on focus and input ---
+queryInput.addEventListener("focus", () => refreshHistoryDropdown(queryInput.value));
+queryInput.addEventListener("input", () => refreshHistoryDropdown(queryInput.value));
 
 // --- Hide dropdown on blur safely ---
 queryInput.addEventListener("blur", () => {
@@ -475,7 +500,7 @@ engineSelect.insertAdjacentElement("afterend", clearBtn);
 clearBtn.addEventListener("click", () => {
     queryHistory = [];
     localStorage.removeItem(QUERY_HISTORY_KEY);
-    refreshHistoryDropdown();
+    refreshHistoryDropdown(queryInput.value);
 });
 
 
