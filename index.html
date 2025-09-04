@@ -351,59 +351,27 @@ engineSelect.addEventListener("change", () => {
 });
 
 // --- Setup query history ---
+// --- Setup query history ---
 let queryHistory = JSON.parse(localStorage.getItem(QUERY_HISTORY_KEY) || "[]");
 
-// --- Create custom dropdown ---
-const dropdown = document.createElement("ul");
-dropdown.style.cssText = `
-    position:absolute;
-    top:100%; left:0; right:0;
-    margin:0; padding:0;
-    list-style:none;
-    border:1px solid #ccc;
-    background:#fff;
-    max-height:200px;
-    overflow-y:auto;
-    display:none;
-    z-index:1000;
-`;
+// Create datalist for suggestions
+const queryList = document.createElement("datalist");
+queryList.id = "query-history-list";
+document.body.appendChild(queryList);
+queryInput.setAttribute("list", "query-history-list");
 
-// Append dropdown next to input
-queryInput.parentNode.appendChild(dropdown);
-
-// --- Refresh dropdown with last 10 history items ---
 function refreshHistoryDropdown() {
-    dropdown.innerHTML = "";
+    // --- iOS-safe: skip updating while input is focused ---
+    if (document.activeElement === queryInput) return;
+
+    queryList.innerHTML = "";
     queryHistory.slice(-10).reverse().forEach(q => {
-        const li = document.createElement("li");
-        li.textContent = q;
-        li.style.cssText = "padding:4px 8px; cursor:pointer;";
-        li.addEventListener("mousedown", () => {
-            queryInput.value = q;        // fill input safely
-            dropdown.style.display = "none";
-        });
-        dropdown.appendChild(li);
+        const option = document.createElement("option");
+        option.value = q;
+        queryList.appendChild(option);
     });
 }
-
-// --- Show dropdown on focus ---
-queryInput.addEventListener("focus", () => {
-    if (queryHistory.length > 0) {
-        refreshHistoryDropdown();
-        dropdown.style.display = "block";
-    }
-});
-
-// --- Hide dropdown on blur and save history ---
-queryInput.addEventListener("blur", () => {
-    setTimeout(() => dropdown.style.display = "none", 100);
-    const val = queryInput.value.trim();
-    if (val && !queryHistory.includes(val)) {
-        queryHistory.push(val);
-        localStorage.setItem(QUERY_HISTORY_KEY, JSON.stringify(queryHistory));
-        refreshHistoryDropdown();
-    }
-});
+refreshHistoryDropdown();
 
 // --- Add Clear History button ---
 const clearBtn = document.createElement("button");
@@ -418,6 +386,8 @@ engineSelect.insertAdjacentElement("afterend", clearBtn);
 clearBtn.addEventListener("click", () => {
     queryHistory = [];
     localStorage.removeItem(QUERY_HISTORY_KEY);
+
+    // Refresh dropdown (safe because input is likely not focused during click)
     refreshHistoryDropdown();
 });
 
