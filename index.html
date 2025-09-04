@@ -352,6 +352,7 @@ engineSelect.addEventListener("change", () => {
 
 
 // --- Setup query history ---
+// --- Setup query history ---
 let queryHistory = JSON.parse(localStorage.getItem(QUERY_HISTORY_KEY) || "[]");
 
 // --- Create custom dropdown ---
@@ -359,15 +360,18 @@ const dropdown = document.createElement("ul");
 dropdown.style.cssText = `
     position:absolute;
     top:100%; left:0;
-    width:100%;
+    width:calc(100% - 2px); 
     margin:0; padding:0;
     list-style:none;
     border:1px solid #ccc;
-    background:#fff;
+    background:#fff; 
     max-height:200px;
     overflow-y:auto;
     display:none;
     z-index:1000;
+    font-size:14px;
+    color:#000;
+    box-shadow:0 2px 6px rgba(0,0,0,0.15);
 `;
 queryInput.parentNode.style.position = "relative"; // ensure parent is positioned
 queryInput.parentNode.appendChild(dropdown);
@@ -379,11 +383,14 @@ function refreshHistoryDropdown() {
     queryHistory.slice(-10).reverse().forEach((q, index) => {
         const li = document.createElement("li");
         li.style.cssText = `
-            padding:4px 8px;
+            padding:6px 10px;
             display:flex;
             justify-content:space-between;
             align-items:center;
             cursor:pointer;
+            font-size:14px;
+            color:#000;
+            background:#fff;
         `;
 
         const textSpan = document.createElement("span");
@@ -394,7 +401,8 @@ function refreshHistoryDropdown() {
         deleteBtn.title = "Delete this entry";
         deleteBtn.style.cssText = `
             background:none; border:none; color:#d33;
-            font-weight:bold; cursor:pointer; padding:0 4px;
+            font-weight:bold; cursor:pointer; padding:0 6px;
+            font-size:14px;
         `;
         deleteBtn.addEventListener("mousedown", (e) => {
             e.stopPropagation(); // prevent filling input
@@ -425,7 +433,6 @@ queryInput.addEventListener("focus", () => {
 
 // --- Hide dropdown on blur safely ---
 queryInput.addEventListener("blur", () => {
-    // small timeout to allow click on deleteBtn or li
     setTimeout(() => dropdown.style.display = "none", 150);
 
     const val = queryInput.value.trim();
