@@ -352,18 +352,26 @@ engineSelect.addEventListener("change", () => {
 
 
 // --- Setup query history ---
+// --- Setup query history ---
 let queryHistory = JSON.parse(localStorage.getItem(QUERY_HISTORY_KEY) || "[]");
 
 // --- Create custom dropdown ---
 const dropdown = document.createElement("ul");
 
-// Make parent relative so dropdown aligns properly
+// Ensure input container is positioned
 queryInput.parentNode.style.position = "relative";
 
-dropdown.style.cssText = `
+// Function to set dropdown position & width based on input
+function updateDropdownPosition() {
+    const rect = queryInput.getBoundingClientRect();
+    dropdown.style.top = queryInput.offsetHeight + 2 + "px"; // just below input
+    dropdown.style.left = "0px";
+    dropdown.style.width = queryInput.offsetWidth + "px";
+}
+updateDropdownPosition();
+
+dropdown.style.cssText += `
     position:absolute;
-    top:100%; left:0;
-    width:100%; /* match input width */
     box-sizing:border-box;
     margin:0; padding:0;
     list-style:none;
@@ -421,7 +429,6 @@ function refreshHistoryDropdown() {
         li.appendChild(textSpan);
         li.appendChild(deleteBtn);
 
-        // Clicking text fills input
         li.addEventListener("mousedown", () => {
             queryInput.value = q;
             dropdown.style.display = "none";
@@ -429,6 +436,8 @@ function refreshHistoryDropdown() {
 
         dropdown.appendChild(li);
     });
+
+    updateDropdownPosition(); // ensure position remains correct
 }
 
 // --- Show dropdown on focus ---
@@ -441,7 +450,6 @@ queryInput.addEventListener("focus", () => {
 
 // --- Hide dropdown on blur safely ---
 queryInput.addEventListener("blur", () => {
-    // timeout allows clicking li or deleteBtn
     setTimeout(() => dropdown.style.display = "none", 150);
 
     const val = queryInput.value.trim();
@@ -451,6 +459,9 @@ queryInput.addEventListener("blur", () => {
         refreshHistoryDropdown();
     }
 });
+
+// --- Update dropdown on window resize ---
+window.addEventListener('resize', updateDropdownPosition);
 
 // --- Add Clear History button ---
 const clearBtn = document.createElement("button");
