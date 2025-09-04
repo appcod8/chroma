@@ -352,6 +352,7 @@ engineSelect.addEventListener("change", () => {
 });
 
 // --- Setup query history ---
+// --- Setup query history ---
 let queryHistory = JSON.parse(localStorage.getItem(QUERY_HISTORY_KEY) || "[]");
 
 // Create datalist for suggestions
@@ -361,8 +362,8 @@ document.body.appendChild(queryList);
 queryInput.setAttribute("list", "query-history-list");
 
 function refreshHistoryDropdown() {
-    // Save focus state
-    const isFocused = document.activeElement === queryInput;
+    // --- iOS-safe: skip updating while input is focused ---
+    if (document.activeElement === queryInput) return;
 
     queryList.innerHTML = "";
     queryHistory.slice(-10).reverse().forEach(q => {
@@ -370,12 +371,6 @@ function refreshHistoryDropdown() {
         option.value = q;
         queryList.appendChild(option);
     });
-
-    // iOS-safe: briefly blur and refocus if input is focused
-    if (isFocused) {
-        queryInput.blur();
-        setTimeout(() => queryInput.focus(), 10);
-    }
 }
 refreshHistoryDropdown();
 
@@ -393,7 +388,7 @@ clearBtn.addEventListener("click", () => {
     queryHistory = [];
     localStorage.removeItem(QUERY_HISTORY_KEY);
 
-    // Refresh dropdown safely
+    // Refresh dropdown (safe because input is likely not focused during click)
     refreshHistoryDropdown();
 });
 
