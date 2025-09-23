@@ -6,11 +6,7 @@
 <title>Sheild Browser Launch</title>
 <style>
     /* Base reset */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -25,18 +21,8 @@
         overflow: hidden;
     }
 
-    h1 {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        animation: fadeIn 1s ease forwards;
-    }
-
-    p {
-        font-size: 1.2rem;
-        max-width: 500px;
-        margin-bottom: 2rem;
-        animation: fadeIn 1.5s ease forwards;
-    }
+    h1 { font-size: 3rem; margin-bottom: 1rem; animation: fadeIn 1s ease forwards; }
+    p { font-size: 1.2rem; max-width: 500px; margin-bottom: 2rem; animation: fadeIn 1.5s ease forwards; }
 
     a.button {
         padding: 0.8rem 1.5rem;
@@ -51,20 +37,22 @@
         transition: background 0.3s ease, transform 0.2s ease;
         animation: fadeIn 2s ease forwards;
     }
+    a.button:hover { background: #357acc; transform: scale(1.05); }
 
-    a.button:hover {
-        background: #357acc;
-        transform: scale(1.05);
+    /* Countdown timer */
+    #countdown {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        animation: fadeIn 2.5s ease forwards;
     }
 
-    /* Animated gradient circles in background */
+    /* Animated background circles */
     .bg-circle {
         position: absolute;
         border-radius: 50%;
         opacity: 0.2;
         animation: float 20s infinite alternate;
     }
-
     .circle1 { width: 200px; height: 200px; background: #4da3ff; top: 10%; left: 15%; animation-duration: 25s; }
     .circle2 { width: 150px; height: 150px; background: #ff6b6b; top: 50%; left: 70%; animation-duration: 30s; }
     .circle3 { width: 250px; height: 250px; background: #ffd93d; top: 70%; left: 30%; animation-duration: 35s; }
@@ -73,7 +61,6 @@
         0% { transform: translateY(0) translateX(0); }
         100% { transform: translateY(-50px) translateX(50px); }
     }
-
     @keyframes fadeIn {
         0% { opacity: 0; transform: translateY(20px); }
         100% { opacity: 1; transform: translateY(0); }
@@ -83,6 +70,7 @@
     @media (max-width: 600px) {
         h1 { font-size: 2.2rem; }
         p { font-size: 1rem; }
+        #countdown { font-size: 1.2rem; }
     }
 </style>
 </head>
@@ -94,6 +82,38 @@
 
     <h1>Sheild Browser</h1>
     <p>Welcome to Sheild — the next-generation browser with Smart Dark Mode, Sepia, and Blue Light filters built-in. Launching soon!</p>
+
+    <!-- Countdown Timer -->
+    <div id="countdown"></div>
+
     <a href="https://chromabrowser.com/sheild-download" class="button">Download Now</a>
+
+<script>
+    // Set your launch date here (YYYY-MM-DDTHH:MM:SS format, local or UTC)
+    const launchDate = new Date("2025-10-15T12:00:00").getTime();
+    const countdownEl = document.getElementById("countdown");
+
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = launchDate - now;
+
+        if (distance <= 0) {
+            countdownEl.innerHTML = "🚀 Sheild Browser is Live!";
+            clearInterval(interval);
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        countdownEl.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s until launch`;
+    }
+
+    updateCountdown(); // Initial call
+    const interval = setInterval(updateCountdown, 1000);
+</script>
 </body>
 </html>
+
