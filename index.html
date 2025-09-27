@@ -34,10 +34,14 @@
     .btn.primary:focus{outline:var(--ring)}
     .btn.ghost{background:transparent}
 
+.hero a {
+  position: relative;
+  z-index: 10; /* makes sure clickable above background/other layers */
+}
 
     /* HERO #1 — David & Goliath (separate class to avoid collisions) */
 .hero-dg {
-  /* height: 100vh; full screen height 
+  height: 70vh;  /* full screen height 
   position: relative; */
   display: flex;
   justify-content: center;
