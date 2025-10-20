@@ -52,37 +52,10 @@
     <h1>Sheild Browser</h1>
     <p>Welcome to Sheild — the next-generation browser with Smart Dark Mode, Sepia, and Blue Light filters built-in. Launching soon!</p>
 
-    <div id="countdown"></div>
+
 
     <a href="#" class="button">Coming soon</a>
 
-<script>
-    // Set your launch date here
-    const launchDate = new Date("2025-25-10T12:00:00").getTime();
-    const countdownEl = document.getElementById("countdown");
 
-    function updateCountdown() {
-        const now = new Date().getTime();
-        const distance = launchDate - now;
-
-        if (distance <= 0) {
-            countdownEl.innerHTML = "🚀 Sheild Browser is Live!";
-            document.querySelector('.button').innerText = "Download Now";
-            document.querySelector('.button').href = "https://chromabrowser.com/sheild-download";
-            clearInterval(interval);
-            return;
-        }
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        countdownEl.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s until launch`;
-    }
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-</script>
 </body>
 </html>
