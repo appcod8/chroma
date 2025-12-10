@@ -1,10 +1,10 @@
 # Chroma Browser
-Chroma (1.0 Beta, initial release).
+Chroma (5.3.1)
 
 What's New:
 
-Improved UI/UX: We've refined the tab management, toolbar, and settings for a smoother experience.
+Improved UI/UX: A new refined tab management, toolbar, and settings for a smoother experience.
 
-Find8 Search: A new Find8 Search homepage has been implemented.
+Integrated Search homepage has been implemented.
 
-Optimized performance: The app is now faster and more memory-efficient. 
+Optimized performance: The app is faster and more memory-efficient. 
