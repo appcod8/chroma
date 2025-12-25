@@ -12,7 +12,7 @@ async function getEmbedder() {
 }
 
 // Load precomputed embeddings
-const data = await fetch("data.json").then(r => r.json());
+const data = await fetch("./data.json").then(r => r.json());
 
 function cosine(a, b) {
   return a.reduce((sum, v, i) => sum + v * b[i], 0);
