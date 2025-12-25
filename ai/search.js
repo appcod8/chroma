@@ -3,11 +3,9 @@ import { pipeline } from "https://cdn.jsdelivr.net/npm/@xenova/transformers/dist
 (async function() {
   document.getElementById("status").textContent = "Loading AI model…";
 
-  // Load embedding model
   const embedder = await pipeline("feature-extraction", "Xenova/all-MiniLM-L6-v2");
   document.getElementById("status").textContent = "AI model Ready…";
 
-  // Load precomputed data
   const data = await fetch("data.json?v=2").then(r => r.json());
   const resultsDiv = document.getElementById("results");
 
@@ -15,11 +13,10 @@ import { pipeline } from "https://cdn.jsdelivr.net/npm/@xenova/transformers/dist
     const q = document.getElementById("q").value.trim();
     if (!q) return resultsDiv.innerHTML = "";
 
-    const qEmbedding = embedder(q); // optional semantic
     const qNorm = q.toLowerCase();
 
     const results = data
-      .filter(d => d.text.toLowerCase().includes(qNorm)) // simple keyword for now
+      .filter(d => d.text.toLowerCase().includes(qNorm))
       .slice(0,5)
       .map(d => `<div class="result">${d.text.replace(new RegExp(q, 'gi'), m => `<mark>${m}</mark>`)}</div>`);
 
