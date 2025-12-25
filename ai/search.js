@@ -11,8 +11,9 @@ document.getElementById("status").textContent = "AI model Ready…";
     const q = document.getElementById("q").value.toLowerCase();
     if (!q) return document.getElementById("results").innerHTML = "";
 
-    const results = data
-      .filter(d => d.text.toLowerCase().includes(q))
+      const qNorm = q.trim().toLowerCase();
+      const results = data.filter(d => d.text.toLowerCase().includes(qNorm));
+
       .slice(0,5)
       .map(d => `<div class="result">${d.text.replace(new RegExp(q, 'gi'), m => `<mark>${m}</mark>`)}</div>`);
 
