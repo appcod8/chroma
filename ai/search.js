@@ -9,7 +9,7 @@ async function getAIAnswer(query) {
     const res = await fetch("https://api-inference.huggingface.co/models/gpt2", {
       method: "POST",
       headers: {
-        "Authorization": "Bearer YOUR_HF_TOKEN",
+        "Authorization": "Bearer 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",
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ inputs: query })
