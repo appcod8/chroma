@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Static AI Search</title>
+  <meta charset="UTF-8">
+  <title>AI Search (Static)</title>
   <style>
-    body { font-family: sans-serif; padding: 2rem; }
-    input { width: 70%; padding: 10px; }
-    button { padding: 10px; }
-    .result { margin-top: 1rem; padding: 1rem; border: 1px solid #ddd; }
+    body { font-family: sans-serif; padding: 2rem; background: #fafafa; }
+    input { width: 70%; padding: 10px; font-size: 1rem; }
+    button { padding: 10px; font-size: 1rem; }
+    .result { margin-top: 1rem; padding: 0.8rem; border: 1px solid #ddd; background: #fff; border-radius: 5px; }
+    mark { background: yellow; }
   </style>
 </head>
 <body>
@@ -15,10 +16,10 @@
 <h2>AI Search (Static)</h2>
 <input id="q" placeholder="Ask something…" />
 <button id="searchBtn">Search</button>
-<p id="status">AI model Ready…</p>
+<p id="status">Ready</p>
 <div id="results"></div>
 
 <script type="module" src="./search.js?v=2"></script>
-
 </body>
 </html>
+
