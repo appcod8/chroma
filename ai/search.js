@@ -5,49 +5,56 @@ import { pipeline } from "https://cdn.jsdelivr.net/npm/@xenova/transformers/dist
   const resultsDiv = document.getElementById("results");
   const qInput = document.getElementById("q");
 
-  status.textContent = "Loading AI model…";
+  // Load data.json
+  const data = await fetch("data.json").then(r => r.json());
 
-  // Load embedding model
+  // Quick substring search for instant feedback
+  function quickSearch(query) {
+    if (!query) return [];
+    return data
+      .filter(d => d.text.toLowerCase().includes(query.toLowerCase()))
+      .slice(0, 5);
+  }
+
+  // Render results
+  function render(results) {
+    resultsDiv.innerHTML = results.length
+      ? results.map(r => `<div class="result">${r.text}</div>`).join("")
+      : "No results found";
+  }
+
+  // Event for search input
+  async function handleSearch() {
+    const query = qInput.value.trim();
+    render(quickSearch(query)); // immediate results
+
+    if (embedder) {
+      // semantic search once model ready
+      const qEmb = (await embedder(query))[0];
+      const ranked = data
+        .map(d => ({ ...d, score: cosineSim(qEmb, d.embedding) }))
+        .sort((a,b)=>b.score-a.score)
+        .slice(0,5);
+      render(ranked);
+    }
+  }
+
+  // Cosine similarity
+  function cosineSim(a,b){
+    let dot=0,normA=0,normB=0;
+    for(let i=0;i<a.length;i++){ dot+=a[i]*b[i]; normA+=a[i]*a[i]; normB+=b[i]*b[i]; }
+    return dot / (Math.sqrt(normA)*Math.sqrt(normB));
+  }
+
+  // Event listeners
+  document.getElementById("searchBtn").addEventListener("click", handleSearch);
+  qInput.addEventListener("keydown", e => { if(e.key==="Enter") handleSearch(); });
+
+  // Load embedding model in background
+  status.textContent = "Loading AI model…";
   const embedder = await pipeline("feature-extraction", "Xenova/all-MiniLM-L6-v2");
   status.textContent = "AI model Ready…";
 
-  // Load your precomputed embeddings
-  const data = await fetch("data.json").then(r => r.json());
-
-  // Compute cosine similarity
-  function cosineSim(a, b) {
-    let dot = 0, normA = 0, normB = 0;
-    for (let i = 0; i < a.length; i++) {
-      dot += a[i] * b[i];
-      normA += a[i] * a[i];
-      normB += b[i] * b[i];
-    }
-    return dot / (Math.sqrt(normA) * Math.sqrt(normB));
-  }
-
-  async function doSearch() {
-    const query = qInput.value.trim();
-    if (!query) return resultsDiv.innerHTML = "";
-
-    // Get embedding for query
-    const qEmb = (await embedder(query))[0];
-
-    // Rank by similarity
-    const ranked = data
-      .map(d => ({ ...d, score: cosineSim(qEmb, d.embedding) }))
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 5);
-
-    // Render results with highlight (optional)
-    resultsDiv.innerHTML = ranked.map(r => {
-      const regex = new RegExp(query, "gi");
-      const text = r.text.replace(regex, match => `<mark>${match}</mark>`);
-      return `<div class="result">${text}</div>`;
-    }).join("");
-  }
-
-  document.getElementById("searchBtn").addEventListener("click", doSearch);
-  qInput.addEventListener("keydown", e => { if (e.key === "Enter") doSearch(); });
 })();
 
 
