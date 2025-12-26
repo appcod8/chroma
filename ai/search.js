@@ -36,3 +36,4 @@ function handleSearch() {
 document.getElementById("searchBtn").addEventListener("click", handleSearch);
 qInput.addEventListener("keydown", e => { if(e.key === "Enter") handleSearch(); });
 
+//
