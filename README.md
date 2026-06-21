@@ -1,4 +1,4 @@
-# Chroma Browser
+# ChromaBrowser.com
 Chroma (5.3.1)
 
 What's New:
